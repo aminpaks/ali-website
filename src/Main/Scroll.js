@@ -37,7 +37,6 @@ export const Scroll = () => {
 
     scrollable.on('scroll', () => {
       const scrollTop = scrollableEl.scrollTop;
-      console.log('top scroll', scrollTop);
 
       texts.each(function (idx) {
         $(this).css('opacity', applyOpacity(idx, scrollTop).toString());
