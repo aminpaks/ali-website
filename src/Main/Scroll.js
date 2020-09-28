@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import $ from 'jquery';
+import jQuery from 'jquery';
 import './style.scss';
 
 const getBackground = (image) => ({ backgroundImage: `url(${image}` });
@@ -7,51 +7,51 @@ const getPublicImage = (imageUrl) => process.env.PUBLIC_URL + imageUrl;
 
 export const Scroll = () => {
   useEffect(() => {
-    console.log('SCRIPT');
+    (function ($) {
+      const scrollable = $('.scrollable');
+      const sections = $('.scrollable .section');
+      const scrollableEl = scrollable.get(0);
 
-    const scrollable = $('.scrollable');
-    const sections = $('.scrollable .section');
-    const scrollableEl = scrollable.get(0);
+      const getOpacity = (top) => {
+        const height = scrollableEl.clientHeight;
+        const bottom = height * (sections.length - 1);
+        const pi = Math.PI;
+        const x = 2 * pi * (top / bottom) - (3 * pi) / 2;
+        const y = Math.sin(x);
+        return y;
+      };
 
-    const getOpacity = (top) => {
-      const height = scrollableEl.clientHeight;
-      const bottom = height * (sections.length - 1);
-      const pi = Math.PI;
-      const x = 2 * pi * (top / bottom) - (3 * pi) / 2;
-      const y = Math.sin(x);
-      return y;
-    };
+      const applyOpacity = (idx, top) => {
+        const height = scrollableEl.clientHeight;
+        const iTop = idx * height - top;
+        let opacity = getOpacity(iTop);
+        if (Math.abs(iTop) >= height * 0.9999) {
+          opacity = 0;
+        }
+        return opacity;
+      };
 
-    const applyOpacity = (idx, top) => {
-      const height = scrollableEl.clientHeight;
-      const iTop = idx * height - top;
-      let opacity = getOpacity(iTop);
-      if (Math.abs(iTop) >= height * 0.9999) {
-        opacity = 0;
-      }
-      return opacity;
-    };
+      const texts = $('.contents .container');
+      const contentBottom = $('.contents-bottom .container');
 
-    const texts = $('.contents .container');
-    const contentBottom = $('.contents-bottom .container');
+      scrollable.on('scroll', () => {
+        const scrollTop = scrollableEl.scrollTop;
 
-    scrollable.on('scroll', () => {
-      const scrollTop = scrollableEl.scrollTop;
+        texts.each(function (idx) {
+          $(this).css('opacity', applyOpacity(idx, scrollTop).toString());
+        });
 
-      texts.each(function (idx) {
-        $(this).css('opacity', applyOpacity(idx, scrollTop).toString());
+        contentBottom.each(function (idx) {
+          const newOpacity = applyOpacity(idx, scrollTop);
+          $(this).css('opacity', String(newOpacity));
+          $(this).css('z-index', String(newOpacity * 100));
+        });
       });
 
-      contentBottom.each(function (idx) {
-        const newOpacity = applyOpacity(idx, scrollTop);
-        $(this).css('opacity', String(newOpacity));
-        $(this).css('z-index', String(newOpacity * 100));
-      });
-    });
-
-    texts.eq(0).css('opacity', 1);
-    contentBottom.eq(0).css('opacity', 1);
-    contentBottom.eq(0).css('z-index', 100);
+      texts.eq(0).css('opacity', 1);
+      contentBottom.eq(0).css('opacity', 1);
+      contentBottom.eq(0).css('z-index', 100);
+    })(jQuery);
   }, []);
   return (
     <div>

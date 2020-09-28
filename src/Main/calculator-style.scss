@@ -1,0 +1,32 @@
+.calculators {
+  .mdc-text-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  .mdc-select {
+    width: 100%;
+  }
+  .mdc-button {
+    width: 100%;
+  }
+
+  display: flex;
+  .col-left,
+  .col-right {
+    margin: 0;
+    width: 50vw;
+    max-width: 50vw;
+    min-height: 100vh;
+    display: block;
+  }
+  .col-left {
+    max-width: 50vw;
+  }
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
