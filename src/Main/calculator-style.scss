@@ -10,17 +10,26 @@
     width: 100%;
   }
 
-  display: flex;
+  display: block;
+  position: relative;
+
   .col-left,
   .col-right {
     margin: 0;
-    width: 50vw;
-    max-width: 50vw;
-    min-height: 100vh;
+    width: 100%;
     display: block;
+    position: relative;
   }
   .col-left {
     max-width: 50vw;
+    z-index: 1;
+  }
+  .col-right {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
   }
 }
 
@@ -28,5 +37,22 @@
   position: relative;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
+#dollar-value-a,
+#dollar-value-b {
+  top: -100px;
+  right: 0;
+  line-height: 2;
+  position: absolute;
+  min-width: 30vw;
+  border-bottom: 2px dotted #000;
+  transition: 350ms ease-out;
+}
+#dollar-value-a {
+  border-bottom-color: #0063B2;
+}
+#dollar-value-b {
+  border-bottom-color: #c91f17;
+}
