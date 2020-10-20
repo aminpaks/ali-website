@@ -1,17 +1,35 @@
 import React from 'react';
 import $ from 'jquery';
-// import logo from './logo.svg';
-import { Scroll, Calculator } from './Main';
+import { Scroll } from './Main';
+import { PageCalculators, PageCheckout, PagePapers } from './Pages';
 import './App.css';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { Theme } from './UI';
 
 window.jQuery = $;
 
 function App() {
   return (
-    <div className="App">
-      {false && <Scroll />}
-      <Calculator />
-    </div>
+    <Router>
+      <Theme>
+        <div className="App">
+          <Switch>
+            <Route path="/papers">
+              <PagePapers />
+            </Route>
+            <Route path="/calculators">
+              <PageCalculators />
+            </Route>
+            <Route path="/checkout">
+              <PageCheckout />
+            </Route>
+            <Route path="/">
+              <Scroll />
+            </Route>
+          </Switch>
+        </div>
+      </Theme>
+    </Router>
   );
 }
 

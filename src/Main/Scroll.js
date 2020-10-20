@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import jQuery from 'jquery';
 import './style.scss';
+import { Button, Layout } from '../UI';
+import { LayoutHome } from '../UI/LayoutHome';
 
 const getBackground = (image) => ({ backgroundImage: `url(${image}` });
 const getPublicImage = (imageUrl) => process.env.PUBLIC_URL + imageUrl;
@@ -54,7 +56,7 @@ export const Scroll = () => {
     })(jQuery);
   }, []);
   return (
-    <div>
+    <LayoutHome>
       <div className="scrollable">
         <div className="section">
           <div style={getBackground(getPublicImage('/back-01.jpg'))}>
@@ -110,42 +112,79 @@ export const Scroll = () => {
       <div className="contents-bottom">
         <div className="container">
           <div className="buttons">
-            <a href="https://google.com/" className="button inverse" target="_blank" rel="noopener noreferrer">
+            <Button color="primary">Test</Button>
+            <Button color="secondary">Test</Button>
+            <a
+              href="https://google.com/"
+              className="button inverse"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Hello
             </a>
-            <a href="https://google.com/" className="button" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://google.com/"
+              className="button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Second
             </a>
           </div>
         </div>
         <div className="container">
           <div className="buttons">
-            <a href="https://google.com/" className="button" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://google.com/"
+              className="button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Section 2 Hello
             </a>
-            <a href="https://google.com/" className="button" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://google.com/"
+              className="button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Section 2 Hello
             </a>
           </div>
         </div>
         <div className="container">
           <div className="buttons">
-            <a href="https://google.com/" className="button inverse" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://google.com/"
+              className="button inverse"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               S#3 Hello
             </a>
-            <a href="https://google.com/" className="button inverse" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://google.com/"
+              className="button inverse"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Second
             </a>
           </div>
         </div>
         <div className="container">
           <div className="buttons">
-            <a href="https://google.com/" className="button" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://google.com/"
+              className="button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               S#4 Hello
             </a>
           </div>
         </div>
       </div>
-    </div>
+    </LayoutHome>
   );
 };
