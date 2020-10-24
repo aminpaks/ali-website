@@ -1,4 +1,5 @@
 import React from 'react';
+import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
@@ -18,4 +19,9 @@ const theme = createMuiTheme({
   },
 });
 
-export const Theme = ({ children }) => <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+export const Theme = ({ children }) => (
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    {children}
+  </ThemeProvider>
+);

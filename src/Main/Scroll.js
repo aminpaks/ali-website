@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import jQuery from 'jquery';
 import './style.scss';
-import { Button, Layout } from '../UI';
+import { Button } from '../UI';
 import { LayoutHome } from '../UI/LayoutHome';
 
 const getBackground = (image) => ({ backgroundImage: `url(${image}` });

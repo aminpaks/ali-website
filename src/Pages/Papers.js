@@ -45,7 +45,7 @@ const Paper = ({ title, link, featured_img }) => {
           className={classes.thumbnail}
           style={{ backgroundImage: `url("${image}")` }}
         >
-          <img src={image} />
+          <img src={image} alt={title} />
         </span>
         <span>{title}</span>
       </a>

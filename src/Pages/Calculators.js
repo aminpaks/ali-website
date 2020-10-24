@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import './calculator-style.scss';
-import { data } from './sampleData';
 import { Layout } from '../UI';
 import { makeStyles } from '@material-ui/core';
 

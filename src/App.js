@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { Scroll } from './Main';
 import { PageCalculators, PageCheckout, PagePapers } from './Pages';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Theme } from './UI';
 
 window.jQuery = $;
