@@ -3,6 +3,13 @@ import { CssBaseline } from '@material-ui/core';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
+  typography: {
+    fontFamily: `"Merriweather", serif`,
+    fontSize: 14,
+    fontWeightLight: 300,
+    fontWeightRegular: 400,
+    fontWeightMedium: 500,
+  },
   palette: {
     primary: {
       light: '#fff',
@@ -15,6 +22,30 @@ const theme = createMuiTheme({
       main: '#ddd',
       // dark: '#fff',
       contrastText: '#000',
+    },
+  },
+  overrides: {
+    'MuiInput-root': {
+      fontFamily: 'inherit',
+    },
+    MuiButton: {
+      // Name of the rule
+      text: {
+        fontFamily: 'inherit',
+        // Some CSS
+        color: 'white',
+      },
+    },
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          fontSize: 16,
+          WebkitFontSmoothing: 'auto',
+        },
+        body: {
+          backgroundColor: '#fff',
+        },
+      },
     },
   },
 });

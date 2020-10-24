@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import $ from 'jquery';
+import * as d3 from 'd3';
+import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import './calculator-style.scss';
-import { Layout } from '../UI';
-import { makeStyles } from '@material-ui/core';
+import { Layout, Button } from '../UI';
+import { apiRequest } from '../fetch';
 
 const useStyle = makeStyles({
   container: {
@@ -20,6 +23,39 @@ const useStyle = makeStyles({
     width: '100%',
   },
 
+  lineContainer: {
+    '&,& .MuiInputBase-root': {
+      fontSize: '2rem',
+    },
+    '& > div': {
+      marginBottom: '1rem',
+    },
+  },
+  line: {
+    display: 'block',
+  },
+
+  inputs: {
+    width: 200,
+    verticalAlign: 'baseline',
+  },
+  inputInitialAmount: {
+    width: 140,
+  },
+  inputDuration: {
+    width: 120,
+    '& input': {
+      textAlign: 'right',
+    },
+  },
+  inputInvestAmount: {
+    width: 110,
+  },
+
+  buttonCalculate: {
+    fontSize: '1.8rem',
+  },
+
   col: {
     margin: 0,
     width: '100%',
@@ -30,368 +66,134 @@ const useStyle = makeStyles({
     maxWidth: '50vw',
     zIndex: 1,
   },
-  colRight: {
-    top: 0,
+  colRight: {},
+
+  chartContainer: {
+    top: 200,
     left: 0,
     width: '100vw',
-    height: '100vh',
+    height: 'calc(100vh - 200px)',
     position: 'fixed',
   },
 });
 
 export const PageCalculators = () => {
-  const classes = useStyle();
+  const [state, setState] = useState({
+    initialAmount: 1000,
+    investDuration: 10,
+    cycleType: 'monthly',
+    cycleAmount: 500,
+  });
+  const { initialAmount, investDuration, cycleType, cycleAmount } = state;
 
-  useEffect(() => {
-    (function ($, d3) {
-      $(() => {
-        let additionType = 'monthly';
-        $('.mdc-text-field').each(function () {
-          window.mdc.textField.MDCTextField.attachTo(this);
-        });
-        $('.mdc-select').each(function () {
-          const select = window.mdc.select.MDCSelect.attachTo(this);
-          select.listen('MDCSelect:change', () => {
-            additionType = select.value;
-          });
-        });
+  const [isCalculating, setCalculating] = useState(false);
 
-        function formatMoney(
-          amount,
-          decimalCount = 2,
-          decimal = '.',
-          thousands = ','
-        ) {
-          try {
-            decimalCount = Math.abs(decimalCount);
-            decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+  const handlePartialUpdate = (prop) => ({ target }) =>
+    setState((v) => ({ ...v, [prop]: target.value }));
+  const handleCalculate = () => {
+    console.log(
+      'initialAmount',
+      initialAmount,
+      'investDuration',
+      investDuration,
+      'cycleType',
+      cycleType,
+      'cycleAmount',
+      cycleAmount
+    );
 
-            const negativeSign = amount < 0 ? '-' : '';
-
-            let i = parseInt(
-              (amount = Math.abs(Number(amount) || 0).toFixed(decimalCount))
-            ).toString();
-            let j = i.length > 3 ? i.length % 3 : 0;
-
-            return (
-              negativeSign +
-              (j ? i.substr(0, j) + thousands : '') +
-              i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thousands) +
-              (decimalCount
-                ? decimal +
-                  Math.abs(amount - i)
-                    .toFixed(decimalCount)
-                    .slice(2)
-                : '')
-            );
-          } catch (e) {
-            console.log(e);
-          }
-        }
-
-        let to = undefined;
-        const drawChart = (dataInput) => {
-          if (to) {
-            clearTimeout(to);
-            to = undefined;
-          }
-          const { y } = document
-            .querySelector('.entry-content')
-            ?.getBoundingClientRect() ?? { y: 0 };
-          const width = window.innerWidth;
-          const height = window.innerHeight - y;
-
-          $('#chart-container').css({ top: y, height });
-
-          let svg;
-          const s1 = d3.select('#invest-chart svg');
-          if (s1.size() > 0) {
-            svg = s1;
-          } else {
-            svg = d3.select('#invest-chart').append('svg');
-          }
-          svg.attr('width', width).attr('height', height);
-
-          const {
-            invest,
-            bankInvest,
-            investMinMax,
-            bankInvestMinMax,
-          } = dataInput;
-          const dataA = invest.slice((invest.length / 2) * -1);
-          const dataB = bankInvest.slice((bankInvest.length / 2) * -1);
-
-          // X Scale
-          const scaleX = d3
-            .scaleLinear()
-            .domain([0, dataA.length - 1])
-            .range([0, width]);
-
-          // Y Scale
-          const scaleY = d3
-            .scaleLinear()
-            .domain([dataA[0], d3.max(dataA)])
-            .range([height, 0]);
-          const scaleY2 = d3
-            .scaleLinear()
-            .domain([dataB[0], d3.max(dataA)])
-            .range([height, 0]);
-
-          // Add the area
-          let areaA;
-          const arA = d3.select('#invest-area');
-          if (arA.size() > 0) {
-            areaA = arA;
-          } else {
-            areaA = svg
-              .append('path')
-              .attr('id', 'invest-area')
-              .attr('fill', '#0063B2')
-              .attr('stroke', '#003f72')
-              .attr('stroke-width', 2);
-          }
-
-          let areaB;
-          const arB = d3.select('#invest-bank-area');
-          if (arB.size() > 0) {
-            areaB = arB;
-          } else {
-            areaB = svg
-              .append('path')
-              .attr('id', 'invest-bank-area')
-              .attr('fill', '#c91f17')
-              .attr('stroke', '#a01812')
-              .attr('stroke-width', 1.5);
-          }
-
-          areaA
-            .datum(dataA)
-            .transition()
-            .duration(500)
-            .attr(
-              'd',
-              d3
-                .area()
-                .x(function (d, i) {
-                  return scaleX(i);
-                })
-                .y0(scaleY(dataA[0]))
-                .y1(scaleY(dataA[0]))
-            );
-          areaB
-            .datum(dataB)
-            .transition()
-            .duration(500)
-            .attr(
-              'd',
-              d3
-                .area()
-                .x(function (d, i) {
-                  return scaleX(i);
-                })
-                .y0(scaleY2(dataB[0]))
-                .y1(scaleY2(dataB[0]))
-            );
-
-          to = setTimeout(() => {
-            areaA
-              .datum(dataA)
-              .transition()
-              .duration(500)
-              .attr(
-                'd',
-                d3
-                  .area()
-                  .x(function (d, i) {
-                    return scaleX(i);
-                  })
-                  .y0(scaleY(dataA[0]))
-                  .y1(function (d) {
-                    return scaleY(d);
-                  })
-              );
-
-            areaB
-              .datum(dataB)
-              .transition()
-              .duration(500)
-              .attr(
-                'd',
-                d3
-                  .area()
-                  .x(function (d, i) {
-                    return scaleX(i);
-                  })
-                  .y0(scaleY2(0))
-                  .y1(function (d) {
-                    return scaleY2(d);
-                  })
-              );
-
-            const [lowA, highA] = investMinMax;
-            const [lowB, highB] = bankInvestMinMax;
-
-            const valueA = `$${formatMoney(lowA)} - $${formatMoney(highA)}`;
-            const valueB = `$${formatMoney(lowB)} - $${formatMoney(highB)}`;
-
-            console.log('A', lowA, highA, scaleY(highA), scaleY(highB));
-            console.log('B', lowB.toFixed(2), highB.toFixed(2));
-
-            $('#dollar-value-a')
-              .text(valueA)
-              .css({ top: scaleY(highA) });
-            $('#dollar-value-b')
-              .text(valueB)
-              .css({ top: scaleY(highB) });
-          }, 1000);
-        };
-
-        $('.calculate-button').on('click', () => {
-          const initialValue = $('#initial-inv').val();
-          const additionValue = $('#invest-addition').val();
-          const term = $('#term-inv').val();
-
-          $.ajax('http://edufina.ca/wp-admin/admin-ajax.php', {
-            type: 'POST',
-            data: {
-              action: 'calculators',
-              initial: initialValue,
-              addition: additionValue,
-              term: term,
-              additionType: additionType,
-            },
-            crossDomain: true,
-            error: (...args) => {
-              console.log('fail', args);
-            },
-            success: (d) => {
-              drawChart(d.data);
-            },
-          });
-        });
+    setCalculating(true);
+    apiRequest(
+      { url: '/calculators' },
+      {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        // mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        // credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        // redirect: 'follow', // manual, *follow, error
+        // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify({
+          initialAmount,
+          duration: investDuration,
+          cycleType,
+          cycleAmount,
+        }), // body data type must match "Content-Type" header
+      }
+    )
+      .then((data) => {
+        setCalculating(false);
+        console.log('data', data);
+        drawChart(data.data);
+      })
+      .catch((err) => {
+        setCalculating(false);
+        console.log(err);
+        debugger;
       });
-    })(window.jQuery, window.d3);
-  }, []);
+  };
+
+  const classes = useStyle();
 
   return (
     <Layout variant="fill">
       <div className={clsx(classes.col, classes.colLeft)}>
-        <div className="mdc-layout-grid">
-          <div className="mdc-layout-grid__inner">
-            <div className="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <label className="mdc-text-field mdc-text-field--filled initial-inv">
-                <span className="mdc-text-field__ripple"></span>
-                <input
-                  type="text"
-                  className="mdc-text-field__input"
-                  aria-labelledby="initial-inv-label"
-                  name="initial-inv"
-                  id="initial-inv"
-                />
-                <span className="mdc-floating-label" id="initial-inv-label">
-                  Initial investment amount
-                </span>
-                <span className="mdc-line-ripple"></span>
-              </label>
-            </div>
-            <div className="mdc-layout-grid__cell"></div>
+        <div className={classes.lineContainer}>
+          <div>
+            I want to invest an initial amount of ${' '}
+            <TextField
+              className={clsx(classes.inputs, classes.inputInitialAmount)}
+              type="number"
+              value={initialAmount}
+              onChange={handlePartialUpdate('initialAmount')}
+            />
           </div>
-          <div className="mdc-layout-grid__inner">
-            <div className="mdc-layout-grid__cell mdc-layout-grid__cell--span-6">
-              <label className="mdc-text-field mdc-text-field--filled initial-inv">
-                <span className="mdc-text-field__ripple"></span>
-                <input
-                  type="text"
-                  className="mdc-text-field__input"
-                  aria-labelledby="initial-inv-label"
-                  name="term-inv"
-                  id="term-inv"
-                />
-                <span className="mdc-floating-label" id="initial-inv-label">
-                  Investment duration (years)
-                </span>
-                <span className="mdc-line-ripple"></span>
-              </label>
-            </div>
-            <div className="mdc-layout-grid__cell"></div>
+          <div>
+            for{' '}
+            <TextField
+              className={clsx(classes.inputs, classes.inputDuration)}
+              type="number"
+              value={investDuration}
+              onChange={handlePartialUpdate('investDuration')}
+            />{' '}
+            years
           </div>
-          <div className="mdc-layout-grid__inner">
-            <div className="mdc-layout-grid__cell mdc-layout-grid__cell--align-right mdc-layout-grid__cell--span-6">
-              {/* SELECT */}
-              <div className="mdc-select mdc-select--filled mdc-select--required mdc-select--fullwidth">
-                <div className="mdc-select__anchor">
-                  <span className="mdc-select__selected-text"></span>
-                  <span className="mdc-select__ripple"></span>
-                  <span className="mdc-select__dropdown-icon">
-                    <svg
-                      className="mdc-select__dropdown-icon-graphic"
-                      viewBox="7 10 10 5"
-                    >
-                      <polygon
-                        className="mdc-select__dropdown-icon-inactive"
-                        stroke="none"
-                        fill-rule="evenodd"
-                        points="7 10 12 15 17 10"
-                      ></polygon>
-                      <polygon
-                        className="mdc-select__dropdown-icon-active"
-                        stroke="none"
-                        fill-rule="evenodd"
-                        points="7 15 12 10 17 15"
-                      ></polygon>
-                    </svg>
-                  </span>
-                  <span className="mdc-floating-label mdc-floating-label--float-above">
-                    Investment frequency
-                  </span>
-                  <span className="mdc-line-ripple"></span>
-                </div>
-
-                <div className="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
-                  <ul className="mdc-list">
-                    <li
-                      className="mdc-list-item mdc-list-item--selected"
-                      data-value="monthly"
-                    >
-                      <span className="mdc-list-item__ripple"></span>
-                      <span className="mdc-list-item__text">Monthly</span>
-                    </li>
-                    <li className="mdc-list-item" data-value="biweekly">
-                      <span className="mdc-list-item__ripple"></span>
-                      <span className="mdc-list-item__text">Bi-weekly</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              {/* SELECT */}
-            </div>
-            <div className="mdc-layout-grid__cell mdc-layout-grid__cell--align-left mdc-layout-grid__cell--span-6">
-              <label className="mdc-text-field mdc-text-field--filled mdc-text-field--no-label">
-                <span className="mdc-text-field__ripple"></span>
-                <input
-                  className="mdc-text-field__input"
-                  type="text"
-                  placeholder="Amount"
-                  aria-label="Label"
-                  id="invest-addition"
-                />
-                <span className="mdc-line-ripple"></span>
-              </label>
-            </div>
+          <div>
+            with{' '}
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={cycleType}
+              onChange={handlePartialUpdate('cycleType')}
+            >
+              <MenuItem value="monthly">monthly</MenuItem>
+              <MenuItem value="biweekly">biweekly</MenuItem>
+            </Select>{' '}
+            investments of ${' '}
+            <TextField
+              className={clsx(classes.inputs, classes.inputInvestAmount)}
+              type="number"
+              value={cycleAmount}
+              onChange={handlePartialUpdate('cycleAmount')}
+            />
           </div>
-          <div className="mdc-layout-grid__inner">
-            <div className="mdc-layout-grid__cell mdc-layout-grid__cell--align-right mdc-layout-grid__cell--span-6">
-              {/* BUTTON */}
-              <button class="mdc-button mdc-button--raised calculate-button">
-                <div class="mdc-button__ripple"></div>
-                <span class="mdc-button__label">Calculate</span>
-              </button>
-              {/* BUTTON */}
-            </div>
+          <div>
+            <Button
+              className={classes.buttonCalculate}
+              onClick={handleCalculate}
+              disabled={isCalculating}
+            >
+              Show me results
+            </Button>
           </div>
         </div>
       </div>
-      <div id="chart-container" className={clsx(classes.col, classes.colRight)}>
+      <div
+        className={clsx(classes.col, classes.colRight, classes.chartContainer)}
+      >
         <div className="chart-wrapper">
           <div id="invest-chart" />
         </div>
@@ -401,3 +203,183 @@ export const PageCalculators = () => {
     </Layout>
   );
 };
+
+function formatMoney(amount, decimalCount = 2, decimal = '.', thousands = ',') {
+  try {
+    decimalCount = Math.abs(decimalCount);
+    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+    const negativeSign = amount < 0 ? '-' : '';
+
+    let i = parseInt(
+      (amount = Math.abs(Number(amount) || 0).toFixed(decimalCount))
+    ).toString();
+    let j = i.length > 3 ? i.length % 3 : 0;
+
+    return (
+      negativeSign +
+      (j ? i.substr(0, j) + thousands : '') +
+      i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thousands) +
+      (decimalCount
+        ? decimal +
+          Math.abs(amount - i)
+            .toFixed(decimalCount)
+            .slice(2)
+        : '')
+    );
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+let to = undefined;
+function drawChart(dataInput) {
+  if (to) {
+    clearTimeout(to);
+    to = undefined;
+  }
+  const { y, width, height } = document
+    .querySelector('.chart-wrapper')
+    ?.getBoundingClientRect() ?? { y: 0 };
+  // const width = window.innerWidth;
+  // const height = window.innerHeight - y;
+
+  $('#chart-container').css({ top: y, height });
+
+  let svg;
+  const s1 = d3.select('#invest-chart svg');
+  if (s1.size() > 0) {
+    svg = s1;
+  } else {
+    svg = d3.select('#invest-chart').append('svg');
+  }
+  svg.attr('width', width).attr('height', height);
+
+  const { invest, bankInvest, investMinMax, bankInvestMinMax } = dataInput;
+  const dataA = invest.slice((invest.length / 2) * -1);
+  const dataB = bankInvest.slice((bankInvest.length / 2) * -1);
+
+  // X Scale
+  const scaleX = d3
+    .scaleLinear()
+    .domain([0, dataA.length - 1])
+    .range([0, width]);
+
+  // Y Scale
+  const scaleY = d3
+    .scaleLinear()
+    .domain([dataA[0], d3.max(dataA)])
+    .range([height, 0]);
+  const scaleY2 = d3
+    .scaleLinear()
+    .domain([dataB[0], d3.max(dataA)])
+    .range([height, 0]);
+
+  // Add the area
+  let areaA;
+  const arA = d3.select('#invest-area');
+  if (arA.size() > 0) {
+    areaA = arA;
+  } else {
+    areaA = svg
+      .append('path')
+      .attr('id', 'invest-area')
+      .attr('fill', '#0063B2')
+      .attr('stroke', '#003f72')
+      .attr('stroke-width', 2);
+  }
+
+  let areaB;
+  const arB = d3.select('#invest-bank-area');
+  if (arB.size() > 0) {
+    areaB = arB;
+  } else {
+    areaB = svg
+      .append('path')
+      .attr('id', 'invest-bank-area')
+      .attr('fill', '#c91f17')
+      .attr('stroke', '#a01812')
+      .attr('stroke-width', 1.5);
+  }
+
+  areaA
+    .datum(dataA)
+    .transition()
+    .duration(500)
+    .attr(
+      'd',
+      d3
+        .area()
+        .x(function (d, i) {
+          return scaleX(i);
+        })
+        .y0(scaleY(dataA[0]))
+        .y1(scaleY(dataA[0]))
+    );
+  areaB
+    .datum(dataB)
+    .transition()
+    .duration(500)
+    .attr(
+      'd',
+      d3
+        .area()
+        .x(function (d, i) {
+          return scaleX(i);
+        })
+        .y0(scaleY2(dataB[0]))
+        .y1(scaleY2(dataB[0]))
+    );
+
+  to = setTimeout(() => {
+    areaA
+      .datum(dataA)
+      .transition()
+      .duration(500)
+      .attr(
+        'd',
+        d3
+          .area()
+          .x(function (d, i) {
+            return scaleX(i);
+          })
+          .y0(scaleY(dataA[0]))
+          .y1(function (d) {
+            return scaleY(d);
+          })
+      );
+
+    areaB
+      .datum(dataB)
+      .transition()
+      .duration(500)
+      .attr(
+        'd',
+        d3
+          .area()
+          .x(function (d, i) {
+            return scaleX(i);
+          })
+          .y0(scaleY2(0))
+          .y1(function (d) {
+            return scaleY2(d);
+          })
+      );
+
+    const [lowA, highA] = investMinMax;
+    const [lowB, highB] = bankInvestMinMax;
+
+    const valueA = `$${formatMoney(lowA)} - $${formatMoney(highA)}`;
+    const valueB = `$${formatMoney(lowB)} - $${formatMoney(highB)}`;
+
+    console.log('A', lowA, highA, scaleY(highA), scaleY(highB));
+    console.log('B', lowB.toFixed(2), highB.toFixed(2));
+
+    $('#dollar-value-a')
+      .text(valueA)
+      .css({ top: scaleY(highA) });
+    $('#dollar-value-b')
+      .text(valueB)
+      .css({ top: scaleY(highB) });
+  }, 1000);
+}

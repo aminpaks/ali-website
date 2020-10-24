@@ -86,12 +86,12 @@ const useStyle = makeStyles({
       right: ({ open }) => (open === true ? '-2em ' : '-1.45em'),
       display: 'block',
       position: 'absolute',
-      backgroundColor: '#fff',
       overflow: 'hidden',
       padding: '2em',
       borderRadius: '0.4em',
       border: '1px solid #eee',
       boxSizing: 'content-box',
+      backgroundColor: '#fff',
 
       borderColor: ({ open }) =>
         open === true ? 'rgba(0,0,0,0.16)' : 'rgba(0,0,0,0)',

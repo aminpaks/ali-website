@@ -4,7 +4,7 @@ import { Scroll } from './Main';
 import { PageCalculators, PageCheckout, PagePapers } from './Pages';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Theme } from './UI';
+import { Nav, Theme } from './UI';
 
 window.jQuery = $;
 
@@ -13,6 +13,7 @@ function App() {
     <Router>
       <Theme>
         <div className="App">
+          <Nav />
           <Switch>
             <Route path="/papers">
               <PagePapers />
