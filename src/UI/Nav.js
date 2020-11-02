@@ -1,6 +1,13 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  forwardRef,
+} from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Container, makeStyles } from '@material-ui/core';
+import { useOutsideClick } from '../Utils/OutsideClick';
 
 const useNavButtonStyle = makeStyles({
   navButton: {
@@ -11,7 +18,7 @@ const useNavButtonStyle = makeStyles({
     cursor: 'pointer',
     zIndex: 2,
     borderRadius: 2,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0,0,0,0)',
     // boxShadow: ({ open }) =>
     //   open === true
     //     ? '0 0 2px 2px rgba(0,0,0,0.2)'
@@ -44,14 +51,14 @@ const useNavButtonStyle = makeStyles({
   },
 });
 
-const NavButton = ({ isOpen, onClick }) => {
+const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   const classes = useNavButtonStyle({ open: isOpen });
   return (
-    <span className={classes.navButton} onClick={onClick}>
+    <span ref={ref} className={classes.navButton} onClick={onClick}>
       <span />
     </span>
   );
-};
+});
 
 const useStyle = makeStyles({
   root: {
@@ -61,6 +68,7 @@ const useStyle = makeStyles({
     padding: '20px 0',
     position: 'fixed',
     zIndex: 99,
+    backgroundColor: ({ bgColor }) => bgColor,
   },
   innerContainer: {
     display: 'flex',
@@ -91,7 +99,7 @@ const useStyle = makeStyles({
       borderRadius: '0.4em',
       border: '1px solid #eee',
       boxSizing: 'content-box',
-      backgroundColor: '#fff',
+      backgroundColor: ({ open }) => (open === true ? '#fff' : 'transparent'),
 
       borderColor: ({ open }) =>
         open === true ? 'rgba(0,0,0,0.16)' : 'rgba(0,0,0,0)',
@@ -113,9 +121,10 @@ const useStyle = makeStyles({
       display: 'block',
       textDecoration: 'none',
       padding: '1em 0',
-      minWidth: '10em',
+      minWidth: '14em',
       textAlign: 'right',
       position: 'relative',
+      whiteSpace: 'nowrap',
       transition: '180ms ease-in-out',
       '&:hover': {
         color: '#fff',
@@ -155,15 +164,38 @@ const useStyle = makeStyles({
     visibility: 'hidden',
     zIndex: -1,
   },
+  navLink: {
+    color: 'inherit',
+    textDecoration: 'none',
+  },
 });
 
 export const Nav = () => {
+  const { pathname } = useLocation();
+  const navRef = useRef();
+  const navLinkRef = useRef();
   const placeholderRef = useRef();
   const [open, setOpen] = useState(false);
   const [client, setClient] = useState({ width: 0, height: 0 });
-  const classes = useStyle({ open, client });
-  const handleMenuOpen = useCallback(() => setOpen((v) => !v), [setOpen]);
-  console.log('open', open, placeholderRef);
+  const classes = useStyle({
+    open,
+    client,
+    bgColor: pathname === '/' ? 'transparent' : 'rgba(255,255,255,0.9)',
+  });
+  const handleMenuOpen = useCallback(
+    ({ target } = {}) => console.log(target) || setOpen((v) => !v),
+    [setOpen]
+  );
+  const handleMenuClose = useCallback(
+    ({ target }) => {
+      console.log(
+        'check',
+        navLinkRef.current?.contains(target) /*.getAttribute() */
+      );
+      setOpen(false);
+    },
+    [setOpen]
+  );
 
   useLayoutEffect(() => {
     const placeholder = placeholderRef.current;
@@ -172,16 +204,24 @@ export const Nav = () => {
     }
   }, []);
 
+  useOutsideClick(navRef, handleMenuClose);
+
   return (
     <div className={classes.root}>
       <Container>
         <div className={classes.innerContainer}>
-          <h1 className={classes.logo}>
-            Edu<span>Fina</span>
-          </h1>
+          <Link to="/" className={classes.navLink}>
+            <h1 className={classes.logo}>
+              Edu<span>Fina</span>
+            </h1>
+          </Link>
           <div className={classes.nav}>
-            <NavButton isOpen={open} onClick={handleMenuOpen} />
-            <nav>
+            <NavButton
+              ref={navLinkRef}
+              isOpen={open}
+              onClick={handleMenuOpen}
+            />
+            <nav ref={navRef}>
               <span>
                 <Link to="/">
                   <span>Home</span>
@@ -189,8 +229,11 @@ export const Nav = () => {
                 <Link to="/checkout">
                   <span>Checkout</span>
                 </Link>
-                <Link to="/calculators">
-                  <span>Calculators</span>
+                <Link to="/investment-calculator">
+                  <span>Investment calculator</span>
+                </Link>
+                <Link to="/mortgage-calculator">
+                  <span>Mortgage calculator</span>
                 </Link>
                 <Link to="/papers">
                   <span>Papers</span>
@@ -198,9 +241,10 @@ export const Nav = () => {
               </span>
               <span ref={placeholderRef} className={classes.navPlaceholder}>
                 <Link to="/">Home</Link>
-                <Link to="/checkout">Checkout</Link>
-                <Link to="/calculators">Calculators</Link>
-                <Link to="/papers">Papers</Link>
+                <Link to="/">Checkout</Link>
+                <Link to="/">Investment calculator</Link>
+                <Link to="/">Mortgage calculator</Link>
+                <Link to="/">Papers</Link>
               </span>
             </nav>
           </div>

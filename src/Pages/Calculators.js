@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
@@ -63,7 +63,7 @@ const useStyle = makeStyles({
     position: 'relative',
   },
   colLeft: {
-    maxWidth: '50vw',
+    maxWidth: '60vw',
     zIndex: 1,
   },
   colRight: {},
@@ -75,7 +75,39 @@ const useStyle = makeStyles({
     height: 'calc(100vh - 200px)',
     position: 'fixed',
   },
+
+  investValueLabel: {
+    top: '100vh',
+    right: 0,
+    fontSize: '1.5rem',
+    marginTop: '-2rem',
+    lineHeight: '2rem',
+    position: 'absolute',
+    minWidth: '36vw',
+    transition: '500ms ease-out',
+    borderBottom: '2px dotted #000',
+    textShadow: '0 0 4px #fff',
+    '& span': {
+      display: 'block',
+      '&:nth-of-type(2)': {
+        position: 'absolute',
+        fontSize: '1rem',
+      },
+    },
+  },
+  investValueBank: {},
+  investValueEduFina: {},
 });
+
+const InvestValueInitial = {
+  isLoading: false,
+  investValueEduFina: 0,
+  investValueBank: 0,
+  topEduFina: undefined,
+  topBank: undefined,
+  date: null,
+  error: null,
+};
 
 export const PageCalculators = () => {
   const [state, setState] = useState({
@@ -86,7 +118,7 @@ export const PageCalculators = () => {
   });
   const { initialAmount, investDuration, cycleType, cycleAmount } = state;
 
-  const [isCalculating, setCalculating] = useState(false);
+  const [investValueState, setInvestValueState] = useState(InvestValueInitial);
 
   const handlePartialUpdate = (prop) => ({ target }) =>
     setState((v) => ({ ...v, [prop]: target.value }));
@@ -102,12 +134,12 @@ export const PageCalculators = () => {
       cycleAmount
     );
 
-    setCalculating(true);
+    setInvestValueState((s) => ({ ...s, isLoading: true }));
     apiRequest(
       { url: '/calculators' },
       {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        // mode: 'cors', // no-cors, *cors, same-origin
+        // mode: 'no-cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         // credentials: 'same-origin', // include, *same-origin, omit
         headers: {
@@ -124,19 +156,43 @@ export const PageCalculators = () => {
         }), // body data type must match "Content-Type" header
       }
     )
-      .then((data) => {
-        setCalculating(false);
-        console.log('data', data);
-        drawChart(data.data);
+      .then(({ data }) => {
+        drawChart(
+          data,
+          (investValueEduFina, topEduFina, investValueBank, topBank) => {
+            setInvestValueState(() => ({
+              isLoading: false,
+              data,
+              topBank,
+              topEduFina,
+              investValueBank,
+              investValueEduFina,
+            }));
+          }
+        );
       })
-      .catch((err) => {
-        setCalculating(false);
-        console.log(err);
-        debugger;
+      .catch((error) => {
+        console.log('validation', error);
+        setInvestValueState({ ...InvestValueInitial, error });
       });
   };
 
   const classes = useStyle();
+
+  useEffect(() => {
+    const handleWindowResize = (e) => {
+      if (
+        investValueState.isLoading === false &&
+        investValueState.data != null
+      ) {
+        console.log('check size', investValueState.data);
+      }
+    };
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  });
+
+  console.log('render', 'loading', investValueState);
 
   return (
     <Layout variant="fill">
@@ -184,7 +240,7 @@ export const PageCalculators = () => {
             <Button
               className={classes.buttonCalculate}
               onClick={handleCalculate}
-              disabled={isCalculating}
+              disabled={investValueState.isLoading}
             >
               Show me results
             </Button>
@@ -197,8 +253,20 @@ export const PageCalculators = () => {
         <div className="chart-wrapper">
           <div id="invest-chart" />
         </div>
-        <div id="dollar-value-a"></div>
-        <div id="dollar-value-b"></div>
+        <div
+          style={{ top: investValueState.topEduFina }}
+          className={clsx(classes.investValueLabel, classes.investValueEduFina)}
+        >
+          <span>{investValueState.investValueEduFina}</span>
+          <span>EduFina</span>
+        </div>
+        <div
+          style={{ top: investValueState.topBank }}
+          className={clsx(classes.investValueLabel, classes.investValueBank)}
+        >
+          <span>{investValueState.investValueBank}</span>
+          <span>Traditional Bank</span>
+        </div>
       </div>
     </Layout>
   );
@@ -233,7 +301,7 @@ function formatMoney(amount, decimalCount = 2, decimal = '.', thousands = ',') {
 }
 
 let to = undefined;
-function drawChart(dataInput) {
+function drawChart(dataInput, callback) {
   if (to) {
     clearTimeout(to);
     to = undefined;
@@ -331,6 +399,8 @@ function drawChart(dataInput) {
         .y1(scaleY2(dataB[0]))
     );
 
+  callback(0, undefined, 0, undefined);
+
   to = setTimeout(() => {
     areaA
       .datum(dataA)
@@ -375,11 +445,13 @@ function drawChart(dataInput) {
     console.log('A', lowA, highA, scaleY(highA), scaleY(highB));
     console.log('B', lowB.toFixed(2), highB.toFixed(2));
 
-    $('#dollar-value-a')
-      .text(valueA)
-      .css({ top: scaleY(highA) });
-    $('#dollar-value-b')
-      .text(valueB)
-      .css({ top: scaleY(highB) });
+    callback(valueA, scaleY(highA), valueB, scaleY(highB));
+
+    // $('#dollar-value-a')
+    //   .text(valueA)
+    //   .css({ top: scaleY(highA) });
+    // $('#dollar-value-b')
+    //   .text(valueB)
+    //   .css({ top: scaleY(highB) });
   }, 1000);
 }

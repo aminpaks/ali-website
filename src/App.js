@@ -1,7 +1,12 @@
 import React from 'react';
 import $ from 'jquery';
 import { Scroll } from './Main';
-import { PageCalculators, PageCheckout, PagePapers } from './Pages';
+import {
+  PageCalculators,
+  PageCheckout,
+  PagePapers,
+  PageMortgageCalculator,
+} from './Pages';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Nav, Theme } from './UI';
@@ -18,7 +23,10 @@ function App() {
             <Route path="/papers">
               <PagePapers />
             </Route>
-            <Route path="/calculators">
+            <Route path="/mortgage-calculator">
+              <PageMortgageCalculator />
+            </Route>
+            <Route path="/investment-calculator">
               <PageCalculators />
             </Route>
             <Route path="/checkout">

@@ -83,28 +83,28 @@ export const Scroll = () => {
         <div className="container">
           <div className="text">
             <div>
-              <h2>Something about this life</h2>
+              <h2>Financial Literacy Course</h2>
             </div>
           </div>
         </div>
         <div className="container">
           <div className="text">
             <div>
-              <h2>Some other topic to point out</h2>
+              <h2>Free Resources</h2>
             </div>
           </div>
         </div>
         <div className="container">
           <div className="text">
             <div>
-              <h2>Courses for free</h2>
+              <h2>Meet Our Team</h2>
             </div>
           </div>
         </div>
         <div className="container">
           <div className="text">
             <div>
-              <h2>This is the end game. Die hard!</h2>
+              <h2>Schedule a Consultation</h2>
             </div>
           </div>
         </div>
@@ -114,22 +114,6 @@ export const Scroll = () => {
           <div className="buttons">
             <Button color="primary">Test</Button>
             <Button color="secondary">Test</Button>
-            <a
-              href="https://google.com/"
-              className="button inverse"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Hello
-            </a>
-            <a
-              href="https://google.com/"
-              className="button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Second
-            </a>
           </div>
         </div>
         <div className="container">

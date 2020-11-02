@@ -7,6 +7,15 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@visx/axis": "^1.1.0",
+    "@visx/event": "^1.0.0",
+    "@visx/gradient": "^1.0.0",
+    "@visx/grid": "^1.1.0",
+    "@visx/group": "^1.0.0",
+    "@visx/mock-data": "^1.0.0",
+    "@visx/scale": "^1.1.0",
+    "@visx/shape": "^1.1.0",
+    "@visx/tooltip": "^1.1.0",
     "clsx": "^1.1.1",
     "d3": "^6.2.0",
     "jquery": "^3.5.1",
@@ -15,7 +24,9 @@
     "react-dom": "^16.13.1",
     "react-query": "^2.23.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "react-spring": "^8.0.27",
+    "spacetime": "^6.9.0"
   },
   "scripts": {
     "start": "react-scripts start",

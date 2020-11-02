@@ -1,4 +1,4 @@
-const baseUrlV1 = 'http://edufina.ca/wp-json/custom/v1';
+const baseUrlV1 = 'https://api.edufina.ca/wp-json/custom/v1';
 
 export const apiRequest = ({ url }, options) => {
   const _url = new URL(url, baseUrlV1);
