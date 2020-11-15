@@ -25,6 +25,7 @@ const useNavButtonStyle = makeStyles({
     //     : '0 0 2px 2px rgba(0,0,0,0)',
     '& span': {
       top: 8,
+      pointerEvents: 'none',
       backgroundColor: ({ open }) => (open === true ? 'transparent' : '#000'),
       '&::before': {
         top: ({ open }) => (open === true ? 0 : -5),
@@ -143,6 +144,7 @@ const useStyle = makeStyles({
         display: 'block',
         position: 'relative',
         transition: 'inherit',
+        pointerEvents: 'none',
       },
       '&::after': {
         top: 0,
@@ -182,17 +184,20 @@ export const Nav = () => {
     client,
     bgColor: pathname === '/' ? 'transparent' : 'rgba(255,255,255,0.9)',
   });
-  const handleMenuOpen = useCallback(
-    ({ target } = {}) => console.log(target) || setOpen((v) => !v),
-    [setOpen]
-  );
+  const handleMenuToggle = useCallback(() => setOpen((v) => !v), [setOpen]);
   const handleMenuClose = useCallback(
     ({ target }) => {
-      console.log(
-        'check',
-        navLinkRef.current?.contains(target) /*.getAttribute() */
-      );
-      setOpen(false);
+      if (target !== navLinkRef.current) {
+        setOpen(false);
+      }
+    },
+    [setOpen]
+  );
+  const handleNavLinkClick = useCallback(
+    ({ target }) => {
+      if (target.tagName === 'A') {
+        setOpen(false);
+      }
     },
     [setOpen]
   );
@@ -219,9 +224,9 @@ export const Nav = () => {
             <NavButton
               ref={navLinkRef}
               isOpen={open}
-              onClick={handleMenuOpen}
+              onClick={handleMenuToggle}
             />
-            <nav ref={navRef}>
+            <nav ref={navRef} onClick={handleNavLinkClick}>
               <span>
                 <Link to="/">
                   <span>Home</span>
