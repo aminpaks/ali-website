@@ -1,17 +1,107 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import jQuery from 'jquery';
 import './style.scss';
 import { Button } from '../UI';
 import { LayoutHome } from '../UI/LayoutHome';
+import {
+  clsx,
+  useMediaQuery,
+  useTheme,
+  makeStyles,
+  Link,
+} from '../dependencies';
 
 const getBackground = (image) => ({ backgroundImage: `url(${image}` });
 const getPublicImage = (imageUrl) => process.env.PUBLIC_URL + imageUrl;
 
+const useStyles = makeStyles({
+  scrollable: {
+    width: '100vw',
+    height: '100vh',
+    overflowY: 'scroll',
+    scrollSnapType: 'y mandatory',
+  },
+  section: {
+    width: '100%',
+    height: '100%',
+    scrollSnapAlign: 'start',
+    '& > div': {
+      width: '100%',
+      height: '100%',
+      backgroundPosition: 'top center',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+    },
+    '& img': {
+      opacity: 0,
+      width: 1,
+      height: 1,
+    },
+  },
+  contents: {
+    top: 0,
+    left: 0,
+    width: '100vw',
+    position: 'fixed',
+    cursor: 'default',
+    '& h2': {
+      fontSize: '2rem',
+      fontWeight: 'normal',
+    },
+    pointerEvents: 'none',
+  },
+  contentsContainer: {
+    width: ({ mdDown }) => (mdDown ? '100vw' : undefined),
+    top: ({ mdDown }) => (mdDown ? 60 : 100),
+    left: '50%',
+    transform: ({ mdDown }) => (mdDown ? undefined : 'translateX(-50%)'),
+    opacity: 0,
+
+    color: '#2d2d2d',
+    textShadow: '0px 0px 4px rgba(0,0,0, 0.2)',
+
+    position: 'absolute',
+    textAlign: 'center',
+
+    userSelect: 'none',
+  },
+  contentsBottom: {
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    position: 'fixed',
+    cursor: 'default',
+  },
+  contentsBottomContainer: {
+    left: '50%',
+    bottom: ({ mdDown }) => (mdDown ? 60 : 100),
+    transform: 'translateX(-50%)',
+    opacity: 0,
+    padding: '0 2em',
+    width: '100%',
+
+    color: 'white',
+    textShadow: '0px 0px 15px black',
+
+    position: 'absolute',
+    textAlign: 'center',
+  },
+});
+
 export const Scroll = () => {
+  const { breakpoints } = useTheme();
+  const matches = useMediaQuery(breakpoints.down('md'));
+  const classes = useStyles({ breakpoints, mdDown: matches });
+
+  const scrollableRef = useRef();
+  const scrollableEl = scrollableRef.current;
+  const contentsRef = useRef();
+  const contentsEl = contentsRef.current;
+
   useEffect(() => {
     (function ($) {
       const scrollable = $('.scrollable');
-      const sections = $('.scrollable .section');
+      const sections = $('.scrollable .abs-section');
       const scrollableEl = scrollable.get(0);
 
       const getOpacity = (top) => {
@@ -33,8 +123,10 @@ export const Scroll = () => {
         return opacity;
       };
 
-      const texts = $('.contents .container');
-      const contentBottom = $('.contents-bottom .container');
+      const texts = $('.abs-text');
+      const contentBottom = $(
+        '.abs-contents-bottom .abs-contents-bottom-container'
+      );
 
       scrollable.on('scroll', () => {
         const scrollTop = scrollableEl.scrollTop;
@@ -55,53 +147,57 @@ export const Scroll = () => {
       contentBottom.eq(0).css('z-index', 100);
     })(jQuery);
   }, []);
+
   return (
     <LayoutHome>
-      <div className="scrollable">
-        <div className="section">
+      <div
+        ref={scrollableRef}
+        className={clsx('scrollable', classes.scrollable)}
+      >
+        <div className={clsx('abs-section', classes.section)}>
           <div style={getBackground(getPublicImage('/back-01.jpg'))}>
             <img alt="background" src={getPublicImage('/back-01.jpg')} />
           </div>
         </div>
-        <div className="section">
+        <div className={clsx('abs-section', classes.section)}>
           <div style={getBackground(getPublicImage('/back-02.jpg'))}>
             <img alt="background" src={getPublicImage('/back-02.jpg')} />
           </div>
         </div>
-        <div className="section">
+        <div className={clsx('abs-section', classes.section)}>
           <div style={getBackground(getPublicImage('/back-03.jpg'))}>
             <img alt="background" src={getPublicImage('/back-03.jpg')} />
           </div>
         </div>
-        <div className="section">
+        <div className={clsx('abs-section', classes.section)}>
           <div style={getBackground(getPublicImage('/back-04.jpg'))}>
             <img alt="background" src={getPublicImage('/back-04.jpg')} />
           </div>
         </div>
       </div>
-      <div className="contents">
-        <div className="container">
+      <div ref={contentsRef} className={classes.contents}>
+        <div className={clsx('abs-text', classes.contentsContainer)}>
           <div className="text">
             <div>
               <h2>Financial Literacy Course</h2>
             </div>
           </div>
         </div>
-        <div className="container">
+        <div className={clsx('abs-text', classes.contentsContainer)}>
           <div className="text">
             <div>
               <h2>Free Resources</h2>
             </div>
           </div>
         </div>
-        <div className="container">
+        <div className={clsx('abs-text', classes.contentsContainer)}>
           <div className="text">
             <div>
               <h2>Meet Our Team</h2>
             </div>
           </div>
         </div>
-        <div className="container">
+        <div className={clsx('abs-text', classes.contentsContainer)}>
           <div className="text">
             <div>
               <h2>Schedule a Consultation</h2>
@@ -109,63 +205,50 @@ export const Scroll = () => {
           </div>
         </div>
       </div>
-      <div className="contents-bottom">
-        <div className="container">
+      <div className={clsx('abs-contents-bottom', classes.contentsBottom)}>
+        <div
+          className={clsx(
+            'abs-contents-bottom-container',
+            classes.contentsBottomContainer
+          )}
+        >
           <div className="buttons">
-            <Button color="primary">Test</Button>
-            <Button color="secondary">Test</Button>
+            <Button color="primary">Register</Button>
+            <Button color="secondary">Learn more</Button>
           </div>
         </div>
-        <div className="container">
+        <div
+          className={clsx(
+            'abs-contents-bottom-container',
+            classes.contentsBottomContainer
+          )}
+        >
           <div className="buttons">
-            <a
-              href="https://google.com/"
-              className="button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Section 2 Hello
-            </a>
-            <a
-              href="https://google.com/"
-              className="button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Section 2 Hello
-            </a>
+            <Button color="primary">Calculators</Button>
+            <Button to="/papers" component={Link} color="secondary">
+              Articles
+            </Button>
           </div>
         </div>
-        <div className="container">
+        <div
+          className={clsx(
+            'abs-contents-bottom-container',
+            classes.contentsBottomContainer
+          )}
+        >
           <div className="buttons">
-            <a
-              href="https://google.com/"
-              className="button inverse"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              S#3 Hello
-            </a>
-            <a
-              href="https://google.com/"
-              className="button inverse"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Second
-            </a>
+            <Button color="primary">Calculators</Button>
+            <Button color="secondary">Articles</Button>
           </div>
         </div>
-        <div className="container">
+        <div
+          className={clsx(
+            'abs-contents-bottom-container',
+            classes.contentsBottomContainer
+          )}
+        >
           <div className="buttons">
-            <a
-              href="https://google.com/"
-              className="button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              S#4 Hello
-            </a>
+            <Button color="primary">Articles</Button>
           </div>
         </div>
       </div>

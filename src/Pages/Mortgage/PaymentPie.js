@@ -36,9 +36,9 @@ export default function Example({
       scaleOrdinal({
         domain: values.map((v) => v.label),
         range: [
-          'rgba(0,20,255,0.5)',
           'rgba(0,20,255,0.2)',
           'rgba(0,20,255,0.1)',
+          'rgba(0,20,255,0.5)',
         ],
       }),
     [data]
@@ -83,7 +83,7 @@ export default function Example({
             $
           </tspan>
           <tspan dy="10" dx="8">
-            {paymentAmount}
+            {paymentAmount.toFixed(0)}
           </tspan>
         </text>
         <text

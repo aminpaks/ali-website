@@ -18,7 +18,7 @@ const theme = createMuiTheme({
       contrastText: '#fff',
     },
     secondary: {
-      // light: '#fff',
+      light: '#000',
       main: '#ddd',
       // dark: '#fff',
       contrastText: '#000',
@@ -32,8 +32,9 @@ const theme = createMuiTheme({
       // Name of the rule
       text: {
         fontFamily: 'inherit',
-        // Some CSS
-        color: 'white',
+      },
+      containedPrimary: {
+        color: 'black',
       },
     },
     MuiCssBaseline: {

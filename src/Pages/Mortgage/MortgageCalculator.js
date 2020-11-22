@@ -485,12 +485,29 @@ export const PageMortgageCalculator = () => {
     const power = Math.pow(1 + interestValue, durationValue);
     const paymentAmount =
       loanValue * interestValue * (power / Math.abs(power - 1));
+    const maintenanceAmount = (purchaseValue * 0.0115) / 12;
+    const propertyTaxAmount = (purchaseValue * 0.008) / 12;
+    const totalAmount = paymentAmount + maintenanceAmount + propertyTaxAmount;
     const paymentData = {
       values: [
-        { label: 'Principle & Interest', portion: 0.9, amount: 291 },
-        { label: 'Property Tax', portion: 0.1, amount: 20281 },
+        {
+          label: 'Maintenance',
+          portion: (maintenanceAmount / totalAmount) * 100,
+          amount: maintenanceAmount,
+        },
+        {
+          label: 'Property Tax',
+          portion: (propertyTaxAmount / totalAmount) * 100,
+          amount: propertyTaxAmount,
+        },
+        {
+          label: 'Principle & Interest',
+          portion: (paymentAmount / totalAmount) * 100,
+          amount: paymentAmount,
+        },
       ],
     };
+    console.log(paymentData);
 
     let date = spacetime(Date.now());
     const month = 360_000;
