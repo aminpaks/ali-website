@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { createPortal } from 'react-dom';
+// import { createPortal } from 'react-dom';
 import { Layout } from '../UI';
 
 const SafeScript = ({ children }) => {
@@ -24,6 +24,17 @@ export const PageCheckout = () => {
   useEffect(() => {
     let script = null;
     if (isVisaSdkAvailable() === false) {
+      window.onVisaCheckoutReady = () => {
+        console.log('check VISA');
+        window.V.init({
+          apiKey: 'NXTQY34SGQOJ3BH196A221-QT8Gx8LrTjEwNc1yM_q7UqoFrk',
+          paymentRequest: {
+            currencyCode: 'CAD',
+            subtotal: '10.00',
+          },
+        });
+      };
+
       script = loadVisaSdk();
 
       console.log('mount', script);
@@ -44,8 +55,7 @@ export const PageCheckout = () => {
           alt="Visa Checkout"
           className="v-button"
           role="button"
-          src="https://sandbox.secure.checkout.visa.com/wallet-services-web/
-    xo/button.png"
+          src="https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png"
         />
       </div>
     </Layout>

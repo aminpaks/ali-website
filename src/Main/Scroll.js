@@ -81,22 +81,27 @@ const useStyles = makeStyles({
     width: '100%',
 
     color: 'white',
-    textShadow: '0px 0px 15px black',
+    // textShadow: '0px 0px 15px black',
 
     position: 'absolute',
     textAlign: 'center',
   },
+  buttonGroup: {
+    '& > *': {
+      margin: ({ spacing }) => spacing(1),
+    },
+  },
 });
 
 export const Scroll = () => {
-  const { breakpoints } = useTheme();
+  const { breakpoints, spacing } = useTheme();
   const matches = useMediaQuery(breakpoints.down('md'));
-  const classes = useStyles({ breakpoints, mdDown: matches });
+  const classes = useStyles({ spacing, breakpoints, mdDown: matches });
 
   const scrollableRef = useRef();
-  const scrollableEl = scrollableRef.current;
+  // const scrollableEl = scrollableRef.current;
   const contentsRef = useRef();
-  const contentsEl = contentsRef.current;
+  // const contentsEl = contentsRef.current;
 
   useEffect(() => {
     (function ($) {
@@ -212,9 +217,18 @@ export const Scroll = () => {
             classes.contentsBottomContainer
           )}
         >
-          <div className="buttons">
-            <Button color="primary">Register</Button>
-            <Button color="secondary">Learn more</Button>
+          <div className={classes.buttonGroup}>
+            <Button color="primary" size="large">
+              Register
+            </Button>
+            <Button
+              to="/about-us"
+              color="secondary"
+              size="large"
+              component={Link}
+            >
+              Learn more
+            </Button>
           </div>
         </div>
         <div
@@ -223,9 +237,16 @@ export const Scroll = () => {
             classes.contentsBottomContainer
           )}
         >
-          <div className="buttons">
-            <Button color="primary">Calculators</Button>
-            <Button to="/papers" component={Link} color="secondary">
+          <div className={classes.buttonGroup}>
+            <Button color="primary" size="large">
+              Calculators
+            </Button>
+            <Button
+              to="/papers"
+              component={Link}
+              color="secondary"
+              size="large"
+            >
               Articles
             </Button>
           </div>
@@ -236,9 +257,13 @@ export const Scroll = () => {
             classes.contentsBottomContainer
           )}
         >
-          <div className="buttons">
-            <Button color="primary">Calculators</Button>
-            <Button color="secondary">Articles</Button>
+          <div className={classes.buttonGroup}>
+            <Button color="primary" size="large">
+              Calculators
+            </Button>
+            <Button color="secondary" size="large">
+              Articles
+            </Button>
           </div>
         </div>
         <div
@@ -247,8 +272,10 @@ export const Scroll = () => {
             classes.contentsBottomContainer
           )}
         >
-          <div className="buttons">
-            <Button color="primary">Articles</Button>
+          <div className={classes.buttonGroup}>
+            <Button color="primary" size="large">
+              Articles
+            </Button>
           </div>
         </div>
       </div>

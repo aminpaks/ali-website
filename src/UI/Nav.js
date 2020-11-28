@@ -234,6 +234,9 @@ export const Nav = () => {
                 <Link to="/checkout">
                   <span>Checkout</span>
                 </Link>
+                <Link to="/about-us">
+                  <span>About Us</span>
+                </Link>
                 <Link to="/investment-calculator">
                   <span>Investment calculator</span>
                 </Link>
@@ -250,6 +253,7 @@ export const Nav = () => {
                 <Link to="/">Investment calculator</Link>
                 <Link to="/">Mortgage calculator</Link>
                 <Link to="/">Papers</Link>
+                <Link to="/">About Us</Link>
               </span>
             </nav>
           </div>

@@ -1,18 +1,18 @@
 import React, {
-  useEffect,
+  // useEffect,
   useState,
   useMemo,
   useCallback,
   useRef,
 } from 'react';
 import spacetime from 'spacetime';
-import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
+import { makeStyles, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import { AreaClosed, Line, Bar } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
-import { GridRows, GridColumns } from '@visx/grid';
+import { GridRows } from '@visx/grid';
 import { scaleTime, scaleLinear } from '@visx/scale';
-import { Group } from '@visx/group';
+// import { Group } from '@visx/group';
 import {
   withTooltip,
   Tooltip,
@@ -154,7 +154,7 @@ const Sample = withTooltip(
           tooltipTop: balanceValueScale(getBalanceValue(d)),
         });
       },
-      [showTooltip, balanceValueScale, dateScale]
+      [showTooltip, balanceValueScale, dateScale, data]
     );
 
     return (
@@ -507,10 +507,8 @@ export const PageMortgageCalculator = () => {
         },
       ],
     };
-    console.log(paymentData);
 
     let date = spacetime(Date.now());
-    const month = 360_000;
 
     let currentOwedAmount = loanValue;
     let totalInterestAmount = 0;

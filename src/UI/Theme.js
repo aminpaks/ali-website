@@ -23,6 +23,9 @@ const theme = createMuiTheme({
       // dark: '#fff',
       contrastText: '#000',
     },
+    accent: {
+      main: '#ce021f',
+    },
   },
   overrides: {
     'MuiInput-root': {
@@ -45,6 +48,9 @@ const theme = createMuiTheme({
         },
         body: {
           backgroundColor: '#fff',
+        },
+        b: {
+          fontWeight: '900',
         },
       },
     },

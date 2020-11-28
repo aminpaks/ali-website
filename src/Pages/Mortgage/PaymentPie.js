@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Pie from '@visx/shape/lib/shapes/Pie';
 import { scaleOrdinal } from '@visx/scale';
@@ -28,7 +28,7 @@ export default function Example({
   const { values } = data;
   const paymentAmount = useMemo(
     () => values.map((v) => v.amount).reduce((acc, v) => acc + v, 0),
-    [data]
+    [values]
   );
   const classes = useChartStyle();
   const getBrowserColor = useMemo(
@@ -41,7 +41,7 @@ export default function Example({
           'rgba(0,20,255,0.5)',
         ],
       }),
-    [data]
+    [values]
   );
 
   if (width < 10) return null;

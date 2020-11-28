@@ -6,6 +6,7 @@ import {
   PageCheckout,
   PagePapers,
   PageMortgageCalculator,
+  PageAboutUs,
 } from './Pages';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -31,6 +32,9 @@ function App() {
             </Route>
             <Route path="/checkout">
               <PageCheckout />
+            </Route>
+            <Route path="/about-us">
+              <PageAboutUs />
             </Route>
             <Route path="/">
               <Scroll />

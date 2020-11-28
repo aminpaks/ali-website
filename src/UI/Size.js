@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 const initialState = {
   isReady: false,
@@ -43,6 +43,7 @@ export const useSize = ({ ref }) => {
   });
   useEffect(() => {
     handleResize(true);
+    // eslint-disable-next-line
   }, []);
 
   return state;
