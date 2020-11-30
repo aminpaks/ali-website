@@ -27,7 +27,7 @@ import { max, extent, bisector } from 'd3-array';
 import { timeFormat } from 'd3-time-format';
 
 import './../calculator-style.scss';
-import { Layout, Button, useSize } from '../../UI';
+import { Layout, Button, useSize, Section } from '../../UI';
 import { formatMoney } from '../../Utils/format';
 import PieChart from './PaymentPie';
 
@@ -537,73 +537,75 @@ export const PageMortgageCalculator = () => {
 
   return (
     <Layout variant="fill" className={classes.layout}>
-      <div className={clsx(classes.col, classes.colLeft)}>
-        <div className={classes.lineContainer}>
-          <div>
-            I want to buy a home valued at ${' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputPurchaseValue)}
-              type="number"
-              value={purchaseValue}
-              onChange={handlePartialUpdate('purchaseValue')}
-            />
-          </div>
-          <div>
-            with a down payment of ${' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputDownPaymentValue)}
-              type="number"
-              value={downPaymentValue}
-              onChange={handlePartialUpdate('downPaymentValue')}
-            />
-          </div>
-          <div>
-            with an interest rate of %{' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputInterestRateValue)}
-              type="number"
-              value={interestRateValue}
-              onChange={handlePartialUpdate('interestRateValue')}
-            />{' '}
-            for{' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputLoadDurationValue)}
-              type="number"
-              value={loanDurationValue}
-              onChange={handlePartialUpdate('loanDurationValue')}
-            />{' '}
-            years
-          </div>
-          <div>
-            <Button
-              className={classes.buttonCalculate}
-              onClick={handleCalculate}
-              size="large"
-            >
-              Estimate
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div className={classes.colRight}>
-        <div>
-          {paymentData && (
-            <PieChart width={340} height={340} data={paymentData} />
-          )}
-        </div>
-        <div>
-          <div ref={chartContainerRef}>
-            {containerSize.isReady && chartData && (
-              <Sample
-                width={containerSize.width}
-                height={containerSize.height}
-                margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
-                data={chartData}
+      <Section>
+        <div className={clsx(classes.col, classes.colLeft)}>
+          <div className={classes.lineContainer}>
+            <div>
+              I want to buy a home valued at ${' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputPurchaseValue)}
+                type="number"
+                value={purchaseValue}
+                onChange={handlePartialUpdate('purchaseValue')}
               />
+            </div>
+            <div>
+              with a down payment of ${' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputDownPaymentValue)}
+                type="number"
+                value={downPaymentValue}
+                onChange={handlePartialUpdate('downPaymentValue')}
+              />
+            </div>
+            <div>
+              with an interest rate of %{' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputInterestRateValue)}
+                type="number"
+                value={interestRateValue}
+                onChange={handlePartialUpdate('interestRateValue')}
+              />{' '}
+              for{' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputLoadDurationValue)}
+                type="number"
+                value={loanDurationValue}
+                onChange={handlePartialUpdate('loanDurationValue')}
+              />{' '}
+              years
+            </div>
+            <div>
+              <Button
+                className={classes.buttonCalculate}
+                onClick={handleCalculate}
+                size="large"
+              >
+                Estimate
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div className={classes.colRight}>
+          <div>
+            {paymentData && (
+              <PieChart width={340} height={340} data={paymentData} />
             )}
           </div>
+          <div>
+            <div ref={chartContainerRef}>
+              {containerSize.isReady && chartData && (
+                <Sample
+                  width={containerSize.width}
+                  height={containerSize.height}
+                  margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
+                  data={chartData}
+                />
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      </Section>
     </Layout>
   );
 };

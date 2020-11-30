@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Container, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 
 const useStyle = makeStyles({
   root: {
@@ -11,13 +11,10 @@ const useStyle = makeStyles({
 
 export const Layout = ({ children, variant, className, ...rest }) => {
   const classes = useStyle({ variant });
-  const { root, ...restClassNames } = classes;
+
   return (
-    <Container
-      {...rest}
-      classes={{ root: clsx(root, className), ...restClassNames }}
-    >
+    <div {...rest} className={clsx(classes.root, className)}>
       {children}
-    </Container>
+    </div>
   );
 };

@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import './calculator-style.scss';
-import { Layout, Button } from '../UI';
+import { Layout, Button, Section } from '../UI';
 import { apiRequest } from '../fetch';
 
 const useStyle = makeStyles({
@@ -196,78 +196,87 @@ export const PageCalculators = () => {
 
   return (
     <Layout variant="fill">
-      <div className={clsx(classes.col, classes.colLeft)}>
-        <div className={classes.lineContainer}>
-          <div>
-            I want to invest an initial amount of ${' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputInitialAmount)}
-              type="number"
-              value={initialAmount}
-              onChange={handlePartialUpdate('initialAmount')}
-            />
+      <Section>
+        <div className={clsx(classes.col, classes.colLeft)}>
+          <div className={classes.lineContainer}>
+            <div>
+              I want to invest an initial amount of ${' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputInitialAmount)}
+                type="number"
+                value={initialAmount}
+                onChange={handlePartialUpdate('initialAmount')}
+              />
+            </div>
+            <div>
+              for{' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputDuration)}
+                type="number"
+                value={investDuration}
+                onChange={handlePartialUpdate('investDuration')}
+              />{' '}
+              years
+            </div>
+            <div>
+              with{' '}
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={cycleType}
+                onChange={handlePartialUpdate('cycleType')}
+              >
+                <MenuItem value="monthly">monthly</MenuItem>
+                <MenuItem value="biweekly">biweekly</MenuItem>
+              </Select>{' '}
+              investments of ${' '}
+              <TextField
+                className={clsx(classes.inputs, classes.inputInvestAmount)}
+                type="number"
+                value={cycleAmount}
+                onChange={handlePartialUpdate('cycleAmount')}
+              />
+            </div>
+            <div>
+              <Button
+                className={classes.buttonCalculate}
+                onClick={handleCalculate}
+                disabled={investValueState.isLoading}
+              >
+                Show me results
+              </Button>
+            </div>
           </div>
-          <div>
-            for{' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputDuration)}
-              type="number"
-              value={investDuration}
-              onChange={handlePartialUpdate('investDuration')}
-            />{' '}
-            years
-          </div>
-          <div>
-            with{' '}
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={cycleType}
-              onChange={handlePartialUpdate('cycleType')}
-            >
-              <MenuItem value="monthly">monthly</MenuItem>
-              <MenuItem value="biweekly">biweekly</MenuItem>
-            </Select>{' '}
-            investments of ${' '}
-            <TextField
-              className={clsx(classes.inputs, classes.inputInvestAmount)}
-              type="number"
-              value={cycleAmount}
-              onChange={handlePartialUpdate('cycleAmount')}
-            />
-          </div>
-          <div>
-            <Button
-              className={classes.buttonCalculate}
-              onClick={handleCalculate}
-              disabled={investValueState.isLoading}
-            >
-              Show me results
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div
-        className={clsx(classes.col, classes.colRight, classes.chartContainer)}
-      >
-        <div className="chart-wrapper">
-          <div id="invest-chart" />
         </div>
         <div
-          style={{ top: investValueState.topEduFina }}
-          className={clsx(classes.investValueLabel, classes.investValueEduFina)}
+          className={clsx(
+            classes.col,
+            classes.colRight,
+            classes.chartContainer
+          )}
         >
-          <span>{investValueState.investValueEduFina}</span>
-          <span>EduFina</span>
+          <div className="chart-wrapper">
+            <div id="invest-chart" />
+          </div>
+          <div
+            style={{ top: investValueState.topEduFina }}
+            className={clsx(
+              classes.investValueLabel,
+              classes.investValueEduFina
+            )}
+          >
+            <span>{investValueState.investValueEduFina}</span>
+            <span>EduFina</span>
+          </div>
+          <div
+            style={{ top: investValueState.topBank }}
+            className={clsx(classes.investValueLabel, classes.investValueBank)}
+          >
+            <span>{investValueState.investValueBank}</span>
+            <span>Traditional Bank</span>
+          </div>
         </div>
-        <div
-          style={{ top: investValueState.topBank }}
-          className={clsx(classes.investValueLabel, classes.investValueBank)}
-        >
-          <span>{investValueState.investValueBank}</span>
-          <span>Traditional Bank</span>
-        </div>
-      </div>
+      </Section>
     </Layout>
   );
 };

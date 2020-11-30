@@ -1,19 +1,22 @@
 import React from 'react';
-import { makeStyles, Container, useTheme } from '@material-ui/core';
-import { Layout } from '../UI';
+import { makeStyles, useTheme } from '@material-ui/core';
+import { Layout, Section } from '../UI';
 
 const useStyles = makeStyles({
-  block: {
-    display: 'block',
-    padding: '4rem 0',
-    margin: '4rem -100%',
-    // marginLeft: '-100%',
-    // marginRight: '-100%',
+  fullBlock: {
     color: '#fff',
+    paddingTop: '4rem',
+    paddingBottom: '4rem',
     backgroundColor: ({ theme }) => theme.palette.accent.main,
   },
   container: {
     fontSize: '1.2rem',
+    '& header': {
+      textAlign: 'center',
+    },
+    '& h1,h2,h3': {
+      marginTop: 0,
+    },
   },
 });
 
@@ -25,41 +28,48 @@ export const PageAboutUs = () => {
     <Layout className="page-checkout">
       <section className={classes.container}>
         <header>
-          <h2>Welcome to EduFina</h2>
+          <Section>
+            <h2>Welcome to EduFina</h2>
+          </Section>
         </header>
 
         <article>
-          <p>
-            EduFina is a financial literacy school based in Montreal that
-            fosters student success with one-on-one or group mentoring and
-            top-of-the-line technology, and educators. Our mission is to provide
-            an excellent education for our students within a stimulating
-            learning environment that will enhance their development and
-            potential for success in managing their finances and growing wealth.
-          </p>
-          <p>
-            Students acquire real-world experience as they train side-by-side
-            with a successful professional educator who will guide them through
-            the complex financial system to allow for a better understanding of
-            banks, funds, stocks, bonds, and more.
-          </p>
-          <div className={classes.block}>
-            <Container>
-              <section>
-                <header>
-                  <h3>Toolbox</h3>
-                </header>
-                <article>Tools</article>
-              </section>
-            </Container>
-          </div>
-          <p>
-            EduFina offers training programs for <b>individuals</b> and{' '}
-            <b>groups</b> that are tailored to each student’s level of
-            experience and learning style. With class sizes limited to eight
-            people, students receive the personal attention they need to learn
-            how to invest and grow their wealth better than an institution.
-          </p>
+          <Section>
+            <p>
+              EduFina is a financial literacy school based in Montreal that
+              fosters student success with one-on-one or group mentoring and
+              top-of-the-line technology, and educators. Our mission is to
+              provide an excellent education for our students within a
+              stimulating learning environment that will enhance their
+              development and potential for success in managing their finances
+              and growing wealth.
+            </p>
+            <p>
+              Students acquire real-world experience as they train side-by-side
+              with a successful professional educator who will guide them
+              through the complex financial system to allow for a better
+              understanding of banks, funds, stocks, bonds, and more.
+            </p>
+          </Section>
+          <Section
+            bgColor="accent"
+            component="section"
+            className={classes.fullBlock}
+          >
+            <header>
+              <h3>Toolbox</h3>
+            </header>
+            <article>Tools</article>
+          </Section>
+          <Section>
+            <p>
+              EduFina offers training programs for <b>individuals</b> and{' '}
+              <b>groups</b> that are tailored to each student’s level of
+              experience and learning style. With class sizes limited to eight
+              people, students receive the personal attention they need to learn
+              how to invest and grow their wealth better than an institution.
+            </p>
+          </Section>
         </article>
       </section>
     </Layout>

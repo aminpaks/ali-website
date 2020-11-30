@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
 import { apiRequest } from '../fetch';
-import { Layout } from '../UI';
+import { Layout, Section } from '../UI';
 
 const border = ({ palette }) => `1px solid ${palette.divider}`;
 
@@ -69,14 +69,17 @@ export const PagePapers = () => {
   );
   return (
     <Layout>
-      <div>Papers page</div>
-      {isLoading === false && data?.data.length > 0 && (
-        <div className={papersContainer}>
-          {data.data.map((item) => (
-            <Paper key={item.id} {...item} />
-          ))}
-        </div>
-      )}
+      <Section>
+        <div>Papers page</div>
+        {isLoading === true && <div>Loading...</div>}
+        {isLoading === false && data?.data.length > 0 && (
+          <div className={papersContainer}>
+            {data.data.map((item) => (
+              <Paper key={item.id} {...item} />
+            ))}
+          </div>
+        )}
+      </Section>
     </Layout>
   );
 };
