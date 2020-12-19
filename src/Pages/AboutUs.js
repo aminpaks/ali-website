@@ -1,10 +1,10 @@
-import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core';
-import { Layout, Section } from '../UI';
+import { Layout, Section, Header } from '../UI';
 
 const useStyles = makeStyles({
   fullBlock: {
     color: '#fff',
+    margin: '3rem 0',
     paddingTop: '4rem',
     paddingBottom: '4rem',
     backgroundColor: ({ theme }) => theme.palette.accent.main,
@@ -27,11 +27,9 @@ export const PageAboutUs = () => {
   return (
     <Layout className="page-checkout">
       <section className={classes.container}>
-        <header>
-          <Section>
-            <h2>Welcome to EduFina</h2>
-          </Section>
-        </header>
+        <Section>
+          <Header variant="h2">Welcome to EduFina</Header>
+        </Section>
 
         <article>
           <Section>

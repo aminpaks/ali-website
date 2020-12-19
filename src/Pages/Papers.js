@@ -64,8 +64,13 @@ const usePapersStyles = makeStyles({
 export const PagePapers = () => {
   const theme = useTheme();
   const { papersContainer } = usePapersStyles(theme);
-  const { isLoading, data } = useQuery('papers', () =>
-    apiRequest({ url: '/papers' })
+  const { isLoading, data } = useQuery(
+    'papers',
+    () => apiRequest({ url: '/papers' }),
+    {
+      refetchOnWindowFocus: false,
+      refetchIntervalInBackground: false,
+    }
   );
   return (
     <Layout>

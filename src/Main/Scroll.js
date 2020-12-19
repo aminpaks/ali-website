@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import jQuery from 'jquery';
-import './style.scss';
-import { Button } from '../UI';
-import { LayoutHome } from '../UI/LayoutHome';
+import { Button, LayoutHome } from '../UI';
 import {
   clsx,
   useMediaQuery,
