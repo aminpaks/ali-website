@@ -45,12 +45,23 @@ const theme = createMuiTheme({
         html: {
           fontSize: 16,
           WebkitFontSmoothing: 'auto',
+          cursor: 'default',
         },
         body: {
-          backgroundColor: '#fff',
+          backgroundColor: '#f5f5f5',
         },
         b: {
           fontWeight: '900',
+        },
+        p: {
+          marginTop: 0,
+          '&:last-of-type': {
+            marginBottom: 0,
+          },
+        },
+
+        '.color--accent-main': {
+          color: '#ce021f',
         },
       },
     },

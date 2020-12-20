@@ -61,7 +61,7 @@ const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   );
 });
 
-const useStyle = makeStyles({
+const useStyle = makeStyles(({ palette }) => ({
   root: {
     top: 0,
     left: 0,
@@ -126,7 +126,8 @@ const useStyle = makeStyles({
       textAlign: 'right',
       position: 'relative',
       whiteSpace: 'nowrap',
-      transition: '180ms ease-in-out',
+      cursor: 'pointer',
+      transition: '180ms ease-in-out, color 100ms ease',
       '&:hover': {
         color: '#fff',
         '&::after': {
@@ -154,7 +155,7 @@ const useStyle = makeStyles({
         content: '""',
         display: 'block',
         position: 'absolute',
-        backgroundColor: 'rgba(0,0,0,1)',
+        backgroundColor: palette.accent.main,
         transition: 'inherit',
       },
     },
@@ -170,7 +171,7 @@ const useStyle = makeStyles({
     color: 'inherit',
     textDecoration: 'none',
   },
-});
+}));
 
 export const Nav = () => {
   const { pathname } = useLocation();
@@ -182,7 +183,7 @@ export const Nav = () => {
   const classes = useStyle({
     open,
     client,
-    bgColor: pathname === '/' ? 'transparent' : 'rgba(255,255,255,0.9)',
+    bgColor: pathname === '/' ? 'transparent' : 'rgba(245,245,245,0.9)',
   });
   const handleMenuToggle = useCallback(() => setOpen((v) => !v), [setOpen]);
   const handleMenuClose = useCallback(
