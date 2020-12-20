@@ -1,8 +1,10 @@
+import { useMediaQuery } from '@material-ui/core';
 import { Layout, Section, Header, Image } from '../../UI';
 import { getPublicImage } from '../../Utils';
 import { Toolbox } from './Toolbox';
 
 export const PageAboutUs = () => {
+  const isSmallScreen = useMediaQuery('(max-width: 900px)');
   return (
     <Layout className="page-checkout">
       <Section>
@@ -13,7 +15,7 @@ export const PageAboutUs = () => {
           </b>
         </Header>
 
-        <article>
+        <div>
           <Section.Part type="column">
             <Section.Column>
               <p>
@@ -33,9 +35,8 @@ export const PageAboutUs = () => {
               </p>
             </Section.Column>
 
-            <Section.Column>
+            <Section.Column visible={!isSmallScreen}>
               <Image
-                float="right"
                 name="About EduFina"
                 source={getPublicImage('/about-image-02.jpg')}
               />
@@ -45,9 +46,8 @@ export const PageAboutUs = () => {
           <Toolbox />
 
           <Section.Part type="column">
-            <Section.Column>
+            <Section.Column visible={!isSmallScreen}>
               <Image
-                float="right"
                 name="EduFina Offers"
                 source={getPublicImage('/about-image-01.jpg')}
               />
@@ -64,7 +64,7 @@ export const PageAboutUs = () => {
               </p>
             </Section.Column>
           </Section.Part>
-        </article>
+        </div>
       </Section>
     </Layout>
   );

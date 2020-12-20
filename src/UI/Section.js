@@ -1,44 +1,65 @@
 import clsx from 'clsx';
 import { Container, makeStyles } from '@material-ui/core';
 
-const useSectionStyle = makeStyles(() => ({
+const useSectionStyle = makeStyles(({ breakpoints }) => ({
   container: {
-    paddingBottom: '6rem',
     fontSize: '1.2rem',
     '& h1,h2,h3': {
       marginTop: 0,
     },
+    [breakpoints.up('md')]: {
+      paddingBottom: '6rem',
+    },
   },
 }));
 
-const usePartStyle = makeStyles(({ palette }) => ({
+const paddingLarge = ({ bgColor }) => {
+  return !!bgColor ? '4rem' : undefined;
+};
+const paddingTopSmall = ({ bgColor }) => {
+  return !!bgColor ? '1rem' : 0;
+};
+
+const usePartStyle = makeStyles(({ breakpoints, palette }) => ({
   root: {
     marginTop: '3rem',
     marginBottom: '3rem',
     '&:not(:first-of-type)': {
-      paddingTop: ({ bgColor }) => (!!bgColor ? '4rem' : undefined),
+      paddingTop: paddingTopSmall,
+      [breakpoints.up('md')]: {
+        paddingTop: paddingLarge,
+      },
     },
-    paddingBottom: ({ bgColor }) => (!!bgColor ? '4rem' : undefined),
+    '&:not(:last-of-type)': {
+      paddingBottom: paddingTopSmall,
+      [breakpoints.up('md')]: {
+        paddingBottom: paddingLarge,
+      },
+    },
     color: ({ bgColor }) => (bgColor === 'accent' ? '#fff' : undefined),
     backgroundColor: ({ bgColor }) =>
       bgColor === 'accent' ? palette.accent.main : undefined,
   },
   container: {
-    display: ({ type }) => (type === 'column' ? 'flex' : undefined),
+    [breakpoints.up('md')]: {
+      display: ({ type }) => (type === 'column' ? 'flex' : undefined),
+    },
   },
 }));
 
-const useColumnStyle = makeStyles({
+const useColumnStyle = makeStyles(({ breakpoints }) => ({
   root: {
-    flex: '0 0 50%',
-    '&:not(:first-of-type)': {
-      paddingLeft: '1.5rem',
-    },
-    '&:not(:last-of-type)': {
-      paddingRight: '1.5rem',
+    [breakpoints.up('md')]: {
+      flex: '0 0 50%',
+      '&:not(:first-of-type)': {
+        paddingLeft: '1.5rem',
+      },
+      '&:not(:last-of-type)': {
+        paddingRight: '1.5rem',
+      },
     },
   },
-});
+}));
 
 const Part = ({
   component,
@@ -58,9 +79,11 @@ const Part = ({
   );
 };
 
-const Column = ({ children }) => {
+const Column = ({ children, visible }) => {
   const classes = useColumnStyle();
-  return <div className={classes.root}>{children}</div>;
+  return visible === false ? null : (
+    <div className={classes.root}>{children}</div>
+  );
 };
 
 export const Section = ({ children }) => {

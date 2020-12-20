@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import './calculator-style.scss';
-import { Layout, Button, Section, Header } from '../../UI';
+import { Layout, Button, Section, Header, useWindowResize } from '../../UI';
 import { apiRequest } from '../../fetch';
 import { getUserSessionId, noop, setUserSessionId } from '../../Utils';
 
-const useStyle = makeStyles({
+const useStyle = makeStyles(({ breakpoints }) => ({
   container: {
     display: 'block',
     position: 'relative',
@@ -64,17 +64,26 @@ const useStyle = makeStyles({
     position: 'relative',
   },
   colLeft: {
-    maxWidth: '60vw',
-    zIndex: 1,
+    [breakpoints.up('md')]: {
+      maxWidth: '60vw',
+      zIndex: 1,
+    },
   },
   colRight: {},
 
   chartContainer: {
-    top: 200,
-    left: 0,
-    width: '100vw',
-    height: 'calc(100vh - 200px)',
-    position: 'fixed',
+    [breakpoints.down('md')]: {
+      width: '100%',
+      height: 400,
+      position: 'relative',
+    },
+    [breakpoints.up('md')]: {
+      top: 200,
+      left: 0,
+      width: '100vw',
+      height: 'calc(100vh - 200px)',
+      position: 'fixed',
+    },
   },
 
   investValueLabel: {
@@ -88,6 +97,7 @@ const useStyle = makeStyles({
     transition: '500ms ease-out',
     borderBottom: '2px dotted #000',
     textShadow: '0 0 4px #fff',
+    pointerEvents: 'none',
     '& span': {
       display: 'block',
       '&:nth-of-type(2)': {
@@ -102,7 +112,7 @@ const useStyle = makeStyles({
   investValueEduFina: {
     borderBottomColor: '#0063b2',
   },
-});
+}));
 
 const InvestValueInitial = {
   isLoading: false,
@@ -115,6 +125,8 @@ const InvestValueInitial = {
 };
 
 export const PageInvestCalculator = () => {
+  const classes = useStyle();
+
   const [state, setState] = useState({
     initialAmount: 1000,
     investDuration: 10,
@@ -125,26 +137,17 @@ export const PageInvestCalculator = () => {
 
   const [investValueState, setInvestValueState] = useState(InvestValueInitial);
 
-  const handlePartialUpdate = (prop) => ({ target }) =>
-    setState((v) => ({ ...v, [prop]: target.value }));
+  const handlePartialUpdate = useCallback(
+    (prop) => ({ target }) => setState((v) => ({ ...v, [prop]: target.value })),
+    []
+  );
   const handleCalculate = () => {
-    console.log(
-      'initialAmount',
-      initialAmount,
-      'investDuration',
-      investDuration,
-      'cycleType',
-      cycleType,
-      'cycleAmount',
-      cycleAmount
-    );
-
     setInvestValueState((s) => ({ ...s, isLoading: true }));
     apiRequest(
       { url: '/calculators' },
       {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        method: 'POST',
+        cache: 'no-cache',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -154,7 +157,7 @@ export const PageInvestCalculator = () => {
           cycleType,
           cycleAmount,
           sessionId: getUserSessionId(),
-        }), // body data type must match "Content-Type" header
+        }),
       }
     )
       .then(({ data }) => {
@@ -176,24 +179,26 @@ export const PageInvestCalculator = () => {
         );
       })
       .catch((error) => {
-        console.log('validation', error);
         setInvestValueState({ ...InvestValueInitial, error });
       });
   };
 
-  const classes = useStyle();
-
-  useEffect(() => {
-    const handleWindowResize = (e) => {
-      if (
-        investValueState.isLoading === false &&
-        investValueState.data != null
-      ) {
-        drawChart(investValueState.data, noop, true);
-      }
-    };
-    window.addEventListener('resize', handleWindowResize);
-    return () => window.removeEventListener('resize', handleWindowResize);
+  useWindowResize(() => {
+    if (investValueState.isLoading === false && investValueState.data != null) {
+      drawChart(
+        investValueState.data,
+        (investValueEduFina, topEduFina, investValueBank, topBank) => {
+          setInvestValueState((s) => ({
+            ...s,
+            topBank,
+            topEduFina,
+            investValueBank,
+            investValueEduFina,
+          }));
+        },
+        true
+      );
+    }
   });
 
   return (
@@ -253,34 +258,43 @@ export const PageInvestCalculator = () => {
             </div>
           </div>
         </Section.Part>
-        <div
-          className={clsx(
-            classes.col,
-            classes.colRight,
-            classes.chartContainer
-          )}
-        >
-          <div className="chart-wrapper">
-            <div id="invest-chart" />
-          </div>
+        <Section.Part>
           <div
-            style={{ top: investValueState.topEduFina }}
             className={clsx(
-              classes.investValueLabel,
-              classes.investValueEduFina
+              classes.col,
+              classes.colRight,
+              classes.chartContainer
             )}
           >
-            <span>{investValueState.investValueEduFina}</span>
-            <span>EduFina</span>
+            <div className="chart-wrapper">
+              <div id="invest-chart" />
+            </div>
+            {investValueState.topEduFina > 0 && (
+              <div
+                style={{ top: investValueState.topEduFina }}
+                className={clsx(
+                  classes.investValueLabel,
+                  classes.investValueEduFina
+                )}
+              >
+                <span>{investValueState.investValueEduFina}</span>
+                <span>EduFina</span>
+              </div>
+            )}
+            {investValueState.topBank > 0 && (
+              <div
+                style={{ top: investValueState.topBank }}
+                className={clsx(
+                  classes.investValueLabel,
+                  classes.investValueBank
+                )}
+              >
+                <span>{investValueState.investValueBank}</span>
+                <span>Traditional Bank</span>
+              </div>
+            )}
           </div>
-          <div
-            style={{ top: investValueState.topBank }}
-            className={clsx(classes.investValueLabel, classes.investValueBank)}
-          >
-            <span>{investValueState.investValueBank}</span>
-            <span>Traditional Bank</span>
-          </div>
-        </div>
+        </Section.Part>
       </Section>
     </Layout>
   );
