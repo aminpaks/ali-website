@@ -7,6 +7,7 @@ import './calculator-style.scss';
 import { Layout, Button, Section, Header, useWindowResize } from '../../UI';
 import { apiRequest } from '../../fetch';
 import { getUserSessionId, noop, setUserSessionId } from '../../Utils';
+import { Counter } from './countUp';
 
 const useStyle = makeStyles(({ breakpoints }) => ({
   container: {
@@ -94,7 +95,10 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     lineHeight: '2rem',
     position: 'absolute',
     minWidth: '36vw',
-    transition: '500ms ease-out',
+    transition: '500ms ease',
+    '&.count-in': {
+      transition: '1s',
+    },
     borderBottom: '2px dotted #000',
     textShadow: '0 0 4px #fff',
     pointerEvents: 'none',
@@ -192,8 +196,6 @@ export const PageInvestCalculator = () => {
             ...s,
             topBank,
             topEduFina,
-            investValueBank,
-            investValueEduFina,
           }));
         },
         true
@@ -269,27 +271,35 @@ export const PageInvestCalculator = () => {
             <div className="chart-wrapper">
               <div id="invest-chart" />
             </div>
-            {investValueState.topEduFina > 0 && (
+            {typeof investValueState.topEduFina === 'number' && (
               <div
                 style={{ top: investValueState.topEduFina }}
                 className={clsx(
                   classes.investValueLabel,
-                  classes.investValueEduFina
+                  classes.investValueEduFina,
+                  { 'count-in': investValueState.investValueEduFina > 0 }
                 )}
               >
-                <span>{investValueState.investValueEduFina}</span>
+                <Counter
+                  value={investValueState.investValueEduFina ?? 0}
+                  onDisplayValue={displayMoney}
+                />
                 <span>EduFina</span>
               </div>
             )}
-            {investValueState.topBank > 0 && (
+            {typeof investValueState.topBank === 'number' && (
               <div
                 style={{ top: investValueState.topBank }}
                 className={clsx(
                   classes.investValueLabel,
-                  classes.investValueBank
+                  classes.investValueBank,
+                  { 'count-in': investValueState.investValueEduFina > 0 }
                 )}
               >
-                <span>{investValueState.investValueBank}</span>
+                <Counter
+                  value={investValueState.investValueBank ?? 0}
+                  onDisplayValue={displayMoney}
+                />
                 <span>Traditional Bank</span>
               </div>
             )}
@@ -300,6 +310,9 @@ export const PageInvestCalculator = () => {
   );
 };
 
+function displayMoney(count) {
+  return '$' + formatMoney(count);
+}
 function formatMoney(amount, decimalCount = 2, decimal = '.', thousands = ',') {
   try {
     decimalCount = Math.abs(decimalCount);
@@ -394,10 +407,11 @@ function drawChart(dataInput, callback = noop, immediate = false) {
       .attr('stroke-width', 1.5);
   }
 
+  const _transOut = d3.transition().ease(d3.easeQuadOut).duration(500);
+
   areaA
     .datum(dataA)
-    .transition()
-    .duration(500)
+    .transition(_transOut)
     .attr(
       'd',
       d3
@@ -410,8 +424,7 @@ function drawChart(dataInput, callback = noop, immediate = false) {
     );
   areaB
     .datum(dataB)
-    .transition()
-    .duration(500)
+    .transition(_transOut)
     .attr(
       'd',
       d3
@@ -424,15 +437,16 @@ function drawChart(dataInput, callback = noop, immediate = false) {
     );
 
   if (immediate !== true) {
-    callback(0, undefined, 0, undefined);
+    callback(0, height, 0, height);
   }
 
   to = setTimeout(
     () => {
+      const _trans = d3.transition().ease(d3.easeCubicOut).duration(1000);
+
       areaA
         .datum(dataA)
-        .transition()
-        .duration(500)
+        .transition(_trans)
         .attr(
           'd',
           d3
@@ -448,8 +462,7 @@ function drawChart(dataInput, callback = noop, immediate = false) {
 
       areaB
         .datum(dataB)
-        .transition()
-        .duration(500)
+        .transition(_trans)
         .attr(
           'd',
           d3
@@ -466,13 +479,10 @@ function drawChart(dataInput, callback = noop, immediate = false) {
       const highA = dataA[dataA.length - 1];
       const highB = dataB[dataB.length - 1];
 
-      const valueA = `$${formatMoney(highA)}`;
-      const valueB = `$${formatMoney(highB)}`;
-
       // console.log('A', highA, highB, scaleY(highA), scaleY(highB));
       // console.log('B', highA.toFixed(2), highB.toFixed(2));
 
-      callback(valueA, scaleY(highA), valueB, scaleY(highB));
+      callback(highA, scaleY(highA), highB, scaleY(highB));
     },
     immediate === true ? 0 : 1000
   );
