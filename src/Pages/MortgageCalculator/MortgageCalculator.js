@@ -1,6 +1,11 @@
 import React, { useState, useRef } from 'react';
 import spacetime from 'spacetime';
-import { makeStyles, TextField, useMediaQuery } from '@material-ui/core';
+import {
+  makeStyles,
+  TextField,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
 import clsx from 'clsx';
 import { Layout, Button, useSize, Section, Header } from '../../UI';
 import PieChart from './PaymentPie';
@@ -72,16 +77,12 @@ const useStyle = makeStyles({
     zIndex: 1,
   },
   colRight: {
-    display: ({ isSmallScreen }) => (isSmallScreen === true ? 'block' : 'flex'),
+    display: 'block',
     '& > div': {
       height: 0,
       display: 'block',
-      flex: ({ isSmallScreen }) =>
-        console.log('check', isSmallScreen) ||
-        (isSmallScreen ? '1 0 100%' : '0 1 50%'),
-      maxWidth: ({ isSmallScreen }) => (isSmallScreen ? '100%' : '50%'),
       position: 'relative',
-      paddingBottom: ({ isSmallScreen }) => (isSmallScreen ? '46%' : '32%'),
+      paddingBottom: 'min(340px, 120%)',
       '&:not(:last-of-type)': {
         marginBottom: 0,
       },
@@ -89,14 +90,21 @@ const useStyle = makeStyles({
         width: '100%',
         height: '100%',
         position: 'absolute',
-        // border: '1px solid',
-        // backgroundColor: 'red',
         '& svg': {
           display: 'block',
           borderRadius: 30,
           overflow: 'hidden',
         },
       },
+    },
+    '&.is-not-small': {
+      display: 'flex',
+      '& > div': {
+        flex: '0 1 50%',
+        maxWidth: '50%',
+        paddingBottom: '32%',
+      },
+      backgroundColor: 'red',
     },
   },
 
@@ -130,6 +138,9 @@ export const PageMortgageCalculator = () => {
     chartData,
     paymentData,
   } = state;
+
+  const theme = useTheme();
+  const isTooSmall = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handlePartialUpdate = (prop) => ({ target }) =>
     setState((v) => ({
@@ -199,7 +210,7 @@ export const PageMortgageCalculator = () => {
     setState((s) => ({ ...s, chartData, paymentData }));
   };
 
-  const isSmallScreen = useMediaQuery('(max-width: 1024px)');
+  const isSmallScreen = useMediaQuery('(max-width: 900px)');
   const classes = useStyle({ isSmallScreen });
   const chartContainerRef = useRef();
   const pieChartContainerRef = useRef();
@@ -268,33 +279,33 @@ export const PageMortgageCalculator = () => {
               </div>
             </div>
           </div>
-          {chartData && paymentData && (
-            <div className={classes.colRight}>
-              <div>
-                <div ref={pieChartContainerRef}>
-                  {pieContainerSize.isReady && paymentData && (
-                    <PieChart
-                      width={pieContainerSize.width}
-                      height={pieContainerSize.height}
-                      data={paymentData}
-                    />
-                  )}
-                </div>
-              </div>
-              <div>
-                <div ref={chartContainerRef}>
-                  {containerSize.isReady && chartData && (
-                    <AreaChart
-                      width={containerSize.width}
-                      height={containerSize.height}
-                      margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
-                      data={chartData}
-                    />
-                  )}
-                </div>
+          <div
+            className={clsx(classes.colRight, { 'is-not-small': !isTooSmall })}
+          >
+            <div>
+              <div ref={pieChartContainerRef}>
+                {pieContainerSize.isReady && paymentData && (
+                  <PieChart
+                    width={pieContainerSize.width}
+                    height={pieContainerSize.height}
+                    data={paymentData}
+                  />
+                )}
               </div>
             </div>
-          )}
+            <div>
+              <div ref={chartContainerRef}>
+                {containerSize.isReady && chartData && (
+                  <AreaChart
+                    width={containerSize.width}
+                    height={containerSize.height}
+                    margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
+                    data={chartData}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </Section.Part>
       </Section>
     </Layout>
