@@ -1,10 +1,10 @@
 import { useMediaQuery } from '@material-ui/core';
-import { Layout, Section, Header, Image } from '../../UI';
+import { Layout, Section, Header, Image, useDesktopQuery } from '../../UI';
 import { getPublicImage } from '../../Utils';
 import { Toolbox } from './Toolbox';
 
 export const PageAboutUs = () => {
-  const isSmallScreen = useMediaQuery('(max-width: 900px)');
+  const isDesktopView = useDesktopQuery();
   return (
     <Layout className="page-checkout">
       <Section>
@@ -35,7 +35,7 @@ export const PageAboutUs = () => {
               </p>
             </Section.Column>
 
-            <Section.Column visible={!isSmallScreen}>
+            <Section.Column visible={isDesktopView}>
               <Image
                 name="About EduFina"
                 source={getPublicImage('/about-image-02.jpg')}
@@ -46,7 +46,7 @@ export const PageAboutUs = () => {
           <Toolbox />
 
           <Section.Part type="column">
-            <Section.Column visible={!isSmallScreen}>
+            <Section.Column visible={isDesktopView}>
               <Image
                 name="EduFina Offers"
                 source={getPublicImage('/about-image-01.jpg')}
@@ -61,6 +61,11 @@ export const PageAboutUs = () => {
                 people, students receive the personal attention they need to
                 learn how to invest and grow their wealth better than an
                 institution.
+              </p>
+              <p>
+                To guarantee our customer satisfaction, we offer a full refund
+                on our course. Our purpose is to educate the public to make
+                financial markets easier to work with and more profitable.
               </p>
             </Section.Column>
           </Section.Part>

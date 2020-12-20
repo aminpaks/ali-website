@@ -1,11 +1,6 @@
 import React, { useState, useRef } from 'react';
 import spacetime from 'spacetime';
-import {
-  makeStyles,
-  TextField,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core';
+import { makeStyles, TextField, useMediaQuery } from '@material-ui/core';
 import clsx from 'clsx';
 import { Layout, Button, useSize, Section, Header } from '../../UI';
 import PieChart from './PaymentPie';
@@ -104,7 +99,6 @@ const useStyle = makeStyles({
         maxWidth: '50%',
         paddingBottom: '32%',
       },
-      backgroundColor: 'red',
     },
   },
 
@@ -139,8 +133,7 @@ export const PageMortgageCalculator = () => {
     paymentData,
   } = state;
 
-  const theme = useTheme();
-  const isTooSmall = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTooSmall = useMediaQuery(({ breakpoints }) => breakpoints.down('sm'));
 
   const handlePartialUpdate = (prop) => ({ target }) =>
     setState((v) => ({
@@ -210,8 +203,7 @@ export const PageMortgageCalculator = () => {
     setState((s) => ({ ...s, chartData, paymentData }));
   };
 
-  const isSmallScreen = useMediaQuery('(max-width: 900px)');
-  const classes = useStyle({ isSmallScreen });
+  const classes = useStyle();
   const chartContainerRef = useRef();
   const pieChartContainerRef = useRef();
   const containerSize = useSize({ ref: chartContainerRef });
