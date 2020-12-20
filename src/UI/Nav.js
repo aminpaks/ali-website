@@ -5,58 +5,82 @@ import React, {
   useState,
   forwardRef,
 } from 'react';
+import { clsx } from '../dependencies';
 import { Link, useLocation } from 'react-router-dom';
 import { Container, makeStyles } from '@material-ui/core';
 import { useOutsideClick } from '../Utils/OutsideClick';
 
 const useNavButtonStyle = makeStyles({
   navButton: {
-    width: 18,
-    height: 18,
-    overflow: 'hidden',
-    position: 'relative',
+    width: 36,
+    height: 36,
+    padding: 9,
+    margin: -9,
+    borderRadius: 2,
     cursor: 'pointer',
     zIndex: 2,
-    borderRadius: 2,
-    backgroundColor: 'rgba(0,0,0,0)',
-    // boxShadow: ({ open }) =>
-    //   open === true
-    //     ? '0 0 2px 2px rgba(0,0,0,0.2)'
-    //     : '0 0 2px 2px rgba(0,0,0,0)',
-    '& span': {
-      top: 8,
+    '&,& span': {
+      display: 'block',
+    },
+    '& > span': {
+      width: 18,
+      height: 18,
+      overflow: 'hidden',
+      position: 'relative',
+      backgroundColor: 'rgba(0,0,0,0)',
       pointerEvents: 'none',
-      backgroundColor: ({ open }) => (open === true ? 'transparent' : '#000'),
-      '&::before': {
-        top: ({ open }) => (open === true ? 0 : -5),
-        transform: ({ open }) =>
-          open === true ? 'rotate(45deg)' : 'rotate(0deg)',
-      },
-      '&::after': {
-        top: ({ open }) => (open === true ? 0 : 5),
-        transform: ({ open }) =>
-          open === true ? 'rotate(-45deg)' : 'rotate(0deg)',
-      },
-      '&,&::before,&::after': {
-        width: '100%',
-        height: 2,
-        content: '""',
-        display: 'block',
+      '& > span': {
+        top: 8,
         backgroundColor: '#000',
-        position: 'absolute',
-        transition: '200ms ease-out',
-        transformOrigin: '50% 50%',
+        '&::before': {
+          top: -5,
+          transform: 'rotate(0deg)',
+        },
+        '&::after': {
+          top: 5,
+          transform: 'rotate(0deg)',
+        },
+        '&,&::before,&::after': {
+          width: '100%',
+          height: 2,
+          content: '""',
+          display: 'block',
+          backgroundColor: '#000',
+          position: 'absolute',
+          transition: '200ms ease-out',
+          transformOrigin: '50% 50%',
+        },
       },
     },
-    background: 'rgba(0,0,0,0.2)',
+    '&.is-open': {
+      '& > span': {
+        '& > span': {
+          backgroundColor: 'transparent',
+          '&::before': {
+            top: 0,
+            transform: 'rotate(45deg)',
+          },
+          '&::after': {
+            top: 0,
+            transform: 'rotate(-45deg)',
+          },
+        },
+      },
+    },
   },
 });
 
 const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   const classes = useNavButtonStyle({ open: isOpen });
   return (
-    <span ref={ref} className={classes.navButton} onClick={onClick}>
-      <span />
+    <span
+      ref={ref}
+      className={clsx(classes.navButton, { 'is-open': isOpen })}
+      onClick={onClick}
+    >
+      <span>
+        <span />
+      </span>
     </span>
   );
 });

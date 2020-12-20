@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
+import clsx from 'clsx';
 import $ from 'jquery';
 import * as d3 from 'd3';
 import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
-import clsx from 'clsx';
+import LoopIcon from '@material-ui/icons/Loop';
 import './calculator-style.scss';
 import { Layout, Button, Section, Header, useWindowResize } from '../../UI';
 import { apiRequest } from '../../fetch';
@@ -54,8 +55,20 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     width: 110,
   },
 
+  '@keyframes rotate': {
+    '0%': {
+      transform: 'rotate(0deg)',
+    },
+    '100%': {
+      transform: 'rotate(-360deg)',
+    },
+  },
   buttonCalculate: {
     fontSize: '1.8rem',
+    '& svg': {
+      animation: '$rotate 1000ms',
+      animationIterationCount: 'infinite',
+    },
   },
 
   col: {
@@ -75,7 +88,7 @@ const useStyle = makeStyles(({ breakpoints }) => ({
   chartContainer: {
     [breakpoints.down('md')]: {
       width: '100%',
-      height: 400,
+      height: 600,
       position: 'relative',
     },
     [breakpoints.up('md')]: {
@@ -191,7 +204,7 @@ export const PageInvestCalculator = () => {
     if (investValueState.isLoading === false && investValueState.data != null) {
       drawChart(
         investValueState.data,
-        (investValueEduFina, topEduFina, investValueBank, topBank) => {
+        (_, topEduFina, __, topBank) => {
           setInvestValueState((s) => ({
             ...s,
             topBank,
@@ -253,6 +266,7 @@ export const PageInvestCalculator = () => {
                   className={classes.buttonCalculate}
                   onClick={handleCalculate}
                   disabled={investValueState.isLoading}
+                  startIcon={investValueState.isLoading && <LoopIcon />}
                 >
                   Show me results
                 </Button>
