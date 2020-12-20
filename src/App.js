@@ -1,6 +1,7 @@
+import $ from 'jquery';
 import { createContext, useContext, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import $ from 'jquery';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Scroll } from './Main';
 import {
   PageAboutUs,
@@ -9,8 +10,6 @@ import {
   PageCheckout,
   PageMortgageCalculator,
 } from './Pages';
-import './App.css';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Nav, Theme } from './UI';
 
 const queryClient = new QueryClient();
