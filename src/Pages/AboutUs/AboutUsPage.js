@@ -1,4 +1,3 @@
-import { useMediaQuery } from '@material-ui/core';
 import { Layout, Section, Header, Image, useDesktopQuery } from '../../UI';
 import { getPublicImage } from '../../Utils';
 import { Toolbox } from './Toolbox';

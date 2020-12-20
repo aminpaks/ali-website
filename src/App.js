@@ -2,12 +2,13 @@ import $ from 'jquery';
 import { createContext, useContext, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Scroll } from './Main';
 import {
   PageAboutUs,
   PageArticles,
-  PageInvestCalculator,
   PageCheckout,
+  PageContact,
+  PageHome,
+  PageInvestCalculator,
   PageMortgageCalculator,
 } from './Pages';
 import { Nav, Theme } from './UI';
@@ -53,8 +54,11 @@ function App() {
                   <Route path="/about-us">
                     <PageAboutUs />
                   </Route>
+                  <Route path="/contact">
+                    <PageContact />
+                  </Route>
                   <Route path="/">
-                    <Scroll />
+                    <PageHome />
                   </Route>
                 </Switch>
               </div>

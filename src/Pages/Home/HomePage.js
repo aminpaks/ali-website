@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import jQuery from 'jquery';
-import { Button, LayoutHome } from '../UI';
+import { Button, LayoutHome } from '../../UI';
 import {
   clsx,
   useMediaQuery,
   useTheme,
   makeStyles,
   Link,
-} from '../dependencies';
+} from '../../dependencies';
 
 const getBackground = (image) => ({ backgroundImage: `url(${image}` });
 const getPublicImage = (imageUrl) => process.env.PUBLIC_URL + imageUrl;
@@ -91,7 +91,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const Scroll = () => {
+export const PageHome = () => {
   const { breakpoints, spacing } = useTheme();
   const matches = useMediaQuery(breakpoints.down('md'));
   const classes = useStyles({ spacing, breakpoints, mdDown: matches });
@@ -168,11 +168,6 @@ export const Scroll = () => {
           </div>
         </div>
         <div className={clsx('abs-section', classes.section)}>
-          <div style={getBackground(getPublicImage('/back-03.jpg'))}>
-            <img alt="background" src={getPublicImage('/back-03.jpg')} />
-          </div>
-        </div>
-        <div className={clsx('abs-section', classes.section)}>
           <div style={getBackground(getPublicImage('/back-04.jpg'))}>
             <img alt="background" src={getPublicImage('/back-04.jpg')} />
           </div>
@@ -196,13 +191,6 @@ export const Scroll = () => {
         <div className={clsx('abs-text', classes.contentsContainer)}>
           <div className="text">
             <div>
-              <h2>Meet Our Team</h2>
-            </div>
-          </div>
-        </div>
-        <div className={clsx('abs-text', classes.contentsContainer)}>
-          <div className="text">
-            <div>
               <h2>Schedule a Consultation</h2>
             </div>
           </div>
@@ -216,9 +204,6 @@ export const Scroll = () => {
           )}
         >
           <div className={classes.buttonGroup}>
-            <Button color="primary" size="large">
-              Register
-            </Button>
             <Button
               to="/about-us"
               color="secondary"
@@ -236,11 +221,16 @@ export const Scroll = () => {
           )}
         >
           <div className={classes.buttonGroup}>
-            <Button color="primary" size="large">
+            <Button
+              to="/investment-calculator"
+              color="primary"
+              size="large"
+              component={Link}
+            >
               Calculators
             </Button>
             <Button
-              to="/papers"
+              to="/articles"
               component={Link}
               color="secondary"
               size="large"
@@ -256,23 +246,8 @@ export const Scroll = () => {
           )}
         >
           <div className={classes.buttonGroup}>
-            <Button color="primary" size="large">
-              Calculators
-            </Button>
-            <Button color="secondary" size="large">
-              Articles
-            </Button>
-          </div>
-        </div>
-        <div
-          className={clsx(
-            'abs-contents-bottom-container',
-            classes.contentsBottomContainer
-          )}
-        >
-          <div className={classes.buttonGroup}>
-            <Button color="primary" size="large">
-              Articles
+            <Button to="/contact" color="primary" size="large" component={Link}>
+              Book
             </Button>
           </div>
         </div>
