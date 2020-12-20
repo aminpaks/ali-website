@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { Layout, Button, useSize, Section, Header } from '../../UI';
 import PieChart from './PaymentPie';
 import { AreaChart } from './AreaChart';
-import './../calculator-style.scss';
 
 const useStyle = makeStyles({
   container: {
@@ -70,22 +69,22 @@ const useStyle = makeStyles({
     position: 'relative',
   },
   colLeft: {
-    // maxWidth: '50vw',
     zIndex: 1,
   },
   colRight: {
     display: ({ isSmallScreen }) => (isSmallScreen === true ? 'block' : 'flex'),
-    marginBottom: '10rem',
-    // alignContent: 'space-between',
     '& > div': {
       height: 0,
       display: 'block',
       flex: ({ isSmallScreen }) =>
         console.log('check', isSmallScreen) ||
-        (isSmallScreen ? undefined : '0 1 50%'),
-      maxWidth: ({ isSmallScreen }) => (isSmallScreen ? 'auto' : '50%'),
-      paddingBottom: '32%',
+        (isSmallScreen ? '1 0 100%' : '0 1 50%'),
+      maxWidth: ({ isSmallScreen }) => (isSmallScreen ? '100%' : '50%'),
       position: 'relative',
+      paddingBottom: ({ isSmallScreen }) => (isSmallScreen ? '46%' : '32%'),
+      '&:not(:last-of-type)': {
+        marginBottom: 0,
+      },
       '& > div': {
         width: '100%',
         height: '100%',
@@ -269,31 +268,33 @@ export const PageMortgageCalculator = () => {
               </div>
             </div>
           </div>
-          <div className={classes.colRight}>
-            <div>
-              <div ref={pieChartContainerRef}>
-                {pieContainerSize.isReady && paymentData && (
-                  <PieChart
-                    width={pieContainerSize.width}
-                    height={pieContainerSize.height}
-                    data={paymentData}
-                  />
-                )}
+          {chartData && paymentData && (
+            <div className={classes.colRight}>
+              <div>
+                <div ref={pieChartContainerRef}>
+                  {pieContainerSize.isReady && paymentData && (
+                    <PieChart
+                      width={pieContainerSize.width}
+                      height={pieContainerSize.height}
+                      data={paymentData}
+                    />
+                  )}
+                </div>
+              </div>
+              <div>
+                <div ref={chartContainerRef}>
+                  {containerSize.isReady && chartData && (
+                    <AreaChart
+                      width={containerSize.width}
+                      height={containerSize.height}
+                      margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
+                      data={chartData}
+                    />
+                  )}
+                </div>
               </div>
             </div>
-            <div>
-              <div ref={chartContainerRef}>
-                {containerSize.isReady && chartData && (
-                  <AreaChart
-                    width={containerSize.width}
-                    height={containerSize.height}
-                    margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
-                    data={chartData}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
+          )}
         </Section.Part>
       </Section>
     </Layout>

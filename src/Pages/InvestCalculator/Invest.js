@@ -4,9 +4,9 @@ import * as d3 from 'd3';
 import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import './calculator-style.scss';
-import { Layout, Button, Section, Header } from '../UI';
-import { apiRequest } from '../fetch';
-import { getUserSessionId, setUserSessionId } from '../Utils';
+import { Layout, Button, Section, Header } from '../../UI';
+import { apiRequest } from '../../fetch';
+import { getUserSessionId, noop, setUserSessionId } from '../../Utils';
 
 const useStyle = makeStyles({
   container: {
@@ -96,8 +96,12 @@ const useStyle = makeStyles({
       },
     },
   },
-  investValueBank: {},
-  investValueEduFina: {},
+  investValueBank: {
+    borderBottomColor: '#c91f17',
+  },
+  investValueEduFina: {
+    borderBottomColor: '#0063b2',
+  },
 });
 
 const InvestValueInitial = {
@@ -110,7 +114,7 @@ const InvestValueInitial = {
   error: null,
 };
 
-export const PageCalculators = () => {
+export const PageInvestCalculator = () => {
   const [state, setState] = useState({
     initialAmount: 1000,
     investDuration: 10,
@@ -149,12 +153,14 @@ export const PageCalculators = () => {
           duration: investDuration,
           cycleType,
           cycleAmount,
-          session: getUserSessionId(),
+          sessionId: getUserSessionId(),
         }), // body data type must match "Content-Type" header
       }
     )
       .then(({ data }) => {
-        setUserSessionId(data.session);
+        if (data.sessionId) {
+          setUserSessionId(data.sessionId);
+        }
         drawChart(
           data,
           (investValueEduFina, topEduFina, investValueBank, topBank) => {
@@ -183,7 +189,7 @@ export const PageCalculators = () => {
         investValueState.isLoading === false &&
         investValueState.data != null
       ) {
-        console.log('check size', investValueState.data);
+        drawChart(investValueState.data, noop, true);
       }
     };
     window.addEventListener('resize', handleWindowResize);
@@ -309,7 +315,7 @@ function formatMoney(amount, decimalCount = 2, decimal = '.', thousands = ',') {
 }
 
 let to = undefined;
-function drawChart(dataInput, callback) {
+function drawChart(dataInput, callback = noop, immediate = false) {
   if (to) {
     clearTimeout(to);
     to = undefined;
@@ -356,7 +362,7 @@ function drawChart(dataInput, callback) {
     areaA = svg
       .append('path')
       .attr('id', 'invest-area')
-      .attr('fill', '#0063B2')
+      .attr('fill', '#0063b2')
       .attr('stroke', '#003f72')
       .attr('stroke-width', 2);
   }
@@ -403,52 +409,57 @@ function drawChart(dataInput, callback) {
         .y1(scaleY2(dataB[0]))
     );
 
-  callback(0, undefined, 0, undefined);
+  if (immediate !== true) {
+    callback(0, undefined, 0, undefined);
+  }
 
-  to = setTimeout(() => {
-    areaA
-      .datum(dataA)
-      .transition()
-      .duration(500)
-      .attr(
-        'd',
-        d3
-          .area()
-          .x(function (d, i) {
-            return scaleX(i);
-          })
-          .y0(scaleY(dataA[0]))
-          .y1(function (d) {
-            return scaleY(d);
-          })
-      );
+  to = setTimeout(
+    () => {
+      areaA
+        .datum(dataA)
+        .transition()
+        .duration(500)
+        .attr(
+          'd',
+          d3
+            .area()
+            .x(function (d, i) {
+              return scaleX(i);
+            })
+            .y0(scaleY(dataA[0]))
+            .y1(function (d) {
+              return scaleY(d);
+            })
+        );
 
-    areaB
-      .datum(dataB)
-      .transition()
-      .duration(500)
-      .attr(
-        'd',
-        d3
-          .area()
-          .x(function (d, i) {
-            return scaleX(i);
-          })
-          .y0(scaleY2(0))
-          .y1(function (d) {
-            return scaleY2(d);
-          })
-      );
+      areaB
+        .datum(dataB)
+        .transition()
+        .duration(500)
+        .attr(
+          'd',
+          d3
+            .area()
+            .x(function (d, i) {
+              return scaleX(i);
+            })
+            .y0(scaleY2(0))
+            .y1(function (d) {
+              return scaleY2(d);
+            })
+        );
 
-    const highA = dataA[dataA.length - 1];
-    const highB = dataB[dataB.length - 1];
+      const highA = dataA[dataA.length - 1];
+      const highB = dataB[dataB.length - 1];
 
-    const valueA = `$${formatMoney(highA)}`;
-    const valueB = `$${formatMoney(highB)}`;
+      const valueA = `$${formatMoney(highA)}`;
+      const valueB = `$${formatMoney(highB)}`;
 
-    console.log('A', highA, highB, scaleY(highA), scaleY(highB));
-    console.log('B', highA.toFixed(2), highB.toFixed(2));
+      // console.log('A', highA, highB, scaleY(highA), scaleY(highB));
+      // console.log('B', highA.toFixed(2), highB.toFixed(2));
 
-    callback(valueA, scaleY(highA), valueB, scaleY(highB));
-  }, 1000);
+      callback(valueA, scaleY(highA), valueB, scaleY(highB));
+    },
+    immediate === true ? 0 : 1000
+  );
 }

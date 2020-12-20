@@ -5,7 +5,7 @@ import { Scroll } from './Main';
 import {
   PageAboutUs,
   PageArticles,
-  PageCalculators,
+  PageInvestCalculator,
   PageCheckout,
   PageMortgageCalculator,
 } from './Pages';
@@ -46,7 +46,7 @@ function App() {
                     <PageMortgageCalculator />
                   </Route>
                   <Route path="/investment-calculator">
-                    <PageCalculators />
+                    <PageInvestCalculator />
                   </Route>
                   <Route path="/checkout">
                     <PageCheckout />

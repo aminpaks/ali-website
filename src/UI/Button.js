@@ -10,7 +10,13 @@ const useStyles = makeStyles({
 export const Button = ({ children, ...rest }) => {
   const classes = useStyles();
   return (
-    <MuiButton {...rest} classes={classes} variant="contained" disableElevation>
+    <MuiButton
+      {...rest}
+      classes={classes}
+      variant="contained"
+      disableElevation
+      size="large"
+    >
       {children}
     </MuiButton>
   );

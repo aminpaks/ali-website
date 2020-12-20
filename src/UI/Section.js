@@ -22,12 +22,6 @@ const usePartStyle = makeStyles(({ palette }) => ({
     color: ({ bgColor }) => (bgColor === 'accent' ? '#fff' : undefined),
     backgroundColor: ({ bgColor }) =>
       bgColor === 'accent' ? palette.accent.main : undefined,
-
-    '&::after': {
-      content: '""',
-      display: 'block',
-      float: 'clear',
-    },
   },
   container: {
     display: ({ type }) => (type === 'column' ? 'flex' : undefined),
