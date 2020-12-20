@@ -1,13 +1,13 @@
-import React from 'react';
+import { createContext, useContext, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import $ from 'jquery';
 import { Scroll } from './Main';
 import {
+  PageAboutUs,
+  PageArticles,
   PageCalculators,
   PageCheckout,
-  PagePapers,
   PageMortgageCalculator,
-  PageAboutUs,
 } from './Pages';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -17,25 +17,18 @@ const queryClient = new QueryClient();
 
 window.jQuery = $;
 
-const StateValueContext = React.createContext();
-const StateUpdaterContext = React.createContext();
+const StateValueContext = createContext();
+const StateUpdaterContext = createContext();
 
 export const useGlobalState = () => {
-  return React.useContext(StateValueContext);
+  return useContext(StateValueContext);
 };
 export const useUpdateState = () => {
-  return React.useContext(StateUpdaterContext);
+  return useContext(StateUpdaterContext);
 };
 
-let x = null;
-
 function App() {
-  const [state, updateState] = React.useState({ value: 'check' });
-
-  if (x !== updateState) {
-    x = updateState;
-    console.log('update render', x);
-  }
+  const [state, updateState] = useState({ value: 'check' });
 
   return (
     <StateUpdaterContext.Provider value={updateState}>
@@ -46,8 +39,8 @@ function App() {
               <div className="App">
                 <Nav />
                 <Switch>
-                  <Route path="/papers">
-                    <PagePapers />
+                  <Route path="/articles">
+                    <PageArticles />
                   </Route>
                   <Route path="/mortgage-calculator">
                     <PageMortgageCalculator />

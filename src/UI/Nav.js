@@ -235,17 +235,17 @@ export const Nav = () => {
                 <Link to="/checkout">
                   <span>Checkout</span>
                 </Link>
-                <Link to="/about-us">
-                  <span>About Us</span>
-                </Link>
                 <Link to="/investment-calculator">
                   <span>Investment calculator</span>
                 </Link>
                 <Link to="/mortgage-calculator">
                   <span>Mortgage calculator</span>
                 </Link>
-                <Link to="/papers">
-                  <span>Papers</span>
+                <Link to="/articles">
+                  <span>Articles</span>
+                </Link>
+                <Link to="/about-us">
+                  <span>About Us</span>
                 </Link>
               </span>
               <span ref={placeholderRef} className={classes.navPlaceholder}>
@@ -253,7 +253,7 @@ export const Nav = () => {
                 <Link to="/">Checkout</Link>
                 <Link to="/">Investment calculator</Link>
                 <Link to="/">Mortgage calculator</Link>
-                <Link to="/">Papers</Link>
+                <Link to="/">Articles</Link>
                 <Link to="/">About Us</Link>
               </span>
             </nav>

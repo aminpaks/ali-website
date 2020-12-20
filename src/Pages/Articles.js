@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
 import { apiRequest } from '../fetch';
-import { Layout, Section } from '../UI';
+import { Header, Layout, Section } from '../UI';
 
 const border = ({ palette }) => `1px solid ${palette.divider}`;
 
@@ -61,7 +61,7 @@ const usePapersStyles = makeStyles({
   },
 });
 
-export const PagePapers = () => {
+export const PageArticles = () => {
   const theme = useTheme();
   const { papersContainer } = usePapersStyles(theme);
   const { isLoading, data } = useQuery(
@@ -75,15 +75,18 @@ export const PagePapers = () => {
   return (
     <Layout>
       <Section>
-        <div>Papers page</div>
-        {isLoading === true && <div>Loading...</div>}
-        {isLoading === false && data?.data.length > 0 && (
-          <div className={papersContainer}>
-            {data.data.map((item) => (
-              <Paper key={item.id} {...item} />
-            ))}
-          </div>
-        )}
+        <Header>Articles</Header>
+
+        <Section.Part>
+          {isLoading === true && <div>Loading...</div>}
+          {isLoading === false && data?.data.length > 0 && (
+            <div className={papersContainer}>
+              {data.data.map((item) => (
+                <Paper key={item.id} {...item} />
+              ))}
+            </div>
+          )}
+        </Section.Part>
       </Section>
     </Layout>
   );

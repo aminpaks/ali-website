@@ -1,4 +1,3 @@
-import React from 'react';
 import clsx from 'clsx';
 import { Container, makeStyles } from '@material-ui/core';
 
@@ -31,8 +30,7 @@ const usePartStyle = makeStyles(({ palette }) => ({
     },
   },
   container: {
-    display: ({ type }) =>
-      console.log('check', type) || (type === 'column' ? 'flex' : undefined),
+    display: ({ type }) => (type === 'column' ? 'flex' : undefined),
   },
 }));
 
@@ -53,16 +51,16 @@ const Part = ({
   className,
   children,
   bgColor = 'primary',
-  type,
+  type = 'simple',
 }) => {
   const classes = usePartStyle({ bgColor, type });
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <article className={clsx(classes.root, className)}>
       <Container component={component} className={classes.container}>
         {children}
       </Container>
-    </div>
+    </article>
   );
 };
 

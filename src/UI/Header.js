@@ -28,7 +28,7 @@ const useStyle = makeStyles(({ palette }) => ({
   },
 }));
 
-export const Header = ({ variant, children }) => {
+export const Header = ({ variant = 'h1', children }) => {
   const classes = useStyle({ variant });
   return (
     <header className={classes.root}>

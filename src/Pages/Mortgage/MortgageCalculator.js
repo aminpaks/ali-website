@@ -1,342 +1,11 @@
-import React, {
-  // useEffect,
-  useState,
-  useMemo,
-  useCallback,
-  useRef,
-} from 'react';
+import React, { useState, useRef } from 'react';
 import spacetime from 'spacetime';
-import { makeStyles, TextField } from '@material-ui/core';
+import { makeStyles, TextField, useMediaQuery } from '@material-ui/core';
 import clsx from 'clsx';
-import { AreaClosed, Line, Bar } from '@visx/shape';
-import { curveMonotoneX } from '@visx/curve';
-import { GridRows } from '@visx/grid';
-import { scaleTime, scaleLinear } from '@visx/scale';
-// import { Group } from '@visx/group';
-import {
-  withTooltip,
-  Tooltip,
-  TooltipWithBounds,
-  defaultStyles,
-} from '@visx/tooltip';
-import { localPoint } from '@visx/event';
-import { LinearGradient } from '@visx/gradient';
-import { AxisLeft } from '@visx/axis';
-
-import { max, extent, bisector } from 'd3-array';
-import { timeFormat } from 'd3-time-format';
-
-import './../calculator-style.scss';
-import { Layout, Button, useSize, Section } from '../../UI';
-import { formatMoney } from '../../Utils/format';
+import { Layout, Button, useSize, Section, Header } from '../../UI';
 import PieChart from './PaymentPie';
-
-export const background = '#f9f9f9';
-export const background2 = '#fff';
-export const accentColorDark = '#404040';
-export const balanceColor = '#2734BE';
-export const interestColor = '#D00000';
-export const principleColor = '#FFA400';
-const tooltipStyles = {
-  ...defaultStyles,
-  background,
-  border: '1px solid white',
-  color: '#000',
-  lineHeight: '2rem',
-  fontSize: '1rem',
-};
-
-const useChartStyles = makeStyles({
-  tooltipLine: {
-    '& > div': {
-      paddingLeft: '1.3rem',
-      position: 'relative',
-    },
-    '& > div::before': {
-      display: 'block',
-      content: '""',
-      top: '0.7rem',
-      left: '0.2rem',
-      width: '0.6rem',
-      height: '0.6rem',
-      borderRadius: '50%',
-      position: 'absolute',
-    },
-  },
-  tooltipBalance: {
-    '&::before': {
-      backgroundColor: balanceColor,
-    },
-  },
-  tooltipInterest: {
-    '&::before': {
-      backgroundColor: interestColor,
-    },
-  },
-  tooltipPrinciple: {
-    '&::before': {
-      backgroundColor: principleColor,
-    },
-  },
-});
-
-// util
-const formatDate = timeFormat("%b %d, '%y");
-
-// accessors
-const getDate = (d) => new Date(d.date);
-const getBalanceValue = (d) => d.balance;
-const getInterestValue = (d) => d.interest;
-const getPrincipleValue = (d) => d.principle;
-const bisectDate = bisector((d) => new Date(d.date)).left;
-
-const Sample = withTooltip(
-  ({
-    width,
-    height,
-    margin = { top: 0, right: 0, bottom: 0, left: 0 },
-    showTooltip,
-    hideTooltip,
-    tooltipData,
-    tooltipTop = 0,
-    tooltipLeft = 0,
-    data,
-  }) => {
-    if (width < 10) return null;
-
-    const classes = useChartStyles();
-
-    // bounds
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
-
-    // scales
-    const dateScale = useMemo(
-      () =>
-        scaleTime({
-          range: [margin.left, innerWidth + margin.left],
-          domain: extent(data, getDate),
-        }),
-      [innerWidth, margin.left, data]
-    );
-    const balanceValueScale = useMemo(() => {
-      const maxBalanceValue = max(data, getBalanceValue) || 0;
-      return scaleLinear({
-        range: [innerHeight + margin.top, margin.top],
-        domain: [0, maxBalanceValue * 1.005],
-        nice: true,
-      });
-    }, [margin.top, innerHeight, data]);
-
-    // tooltip handler
-    const handleTooltip = useCallback(
-      (event) => {
-        const { x } = localPoint(event) || { x: 0 };
-        const x0 = dateScale.invert(x);
-        const index = bisectDate(data, x0, 1);
-        const d0 = data[index - 1];
-        const d1 = data[index];
-        let d = d0;
-        if (d1 && getDate(d1)) {
-          d =
-            x0.valueOf() - getDate(d0).valueOf() >
-            getDate(d1).valueOf() - x0.valueOf()
-              ? d1
-              : d0;
-        }
-        showTooltip({
-          tooltipData: {
-            d,
-            interestTop: balanceValueScale(getInterestValue(d)),
-            principleTop: balanceValueScale(getPrincipleValue(d)),
-          },
-          tooltipLeft: x,
-          tooltipTop: balanceValueScale(getBalanceValue(d)),
-        });
-      },
-      [showTooltip, balanceValueScale, dateScale, data]
-    );
-
-    return (
-      <div>
-        <svg width={width} height={height}>
-          <rect
-            x={0}
-            y={0}
-            width={width}
-            height={height}
-            fill="url(#area-background-gradient)"
-          />
-          <LinearGradient
-            id="area-background-gradient"
-            from={background}
-            to={background2}
-          />
-          <LinearGradient
-            id="area-gradient"
-            from={balanceColor}
-            to={balanceColor}
-            fromOpacity={0.8}
-            toOpacity={0.2}
-          />
-          <LinearGradient
-            id="interest-gradient"
-            from={interestColor}
-            to={interestColor}
-            fromOpacity={0.6}
-            toOpacity={0.8}
-          />
-          <LinearGradient
-            id="principle-gradient"
-            from={principleColor}
-            to={principleColor}
-            fromOpacity={0.8}
-            toOpacity={0.2}
-          />
-          <GridRows
-            left={margin.left}
-            scale={balanceValueScale}
-            width={innerWidth}
-            strokeDasharray="1,3"
-            stroke={balanceColor}
-            strokeOpacity={0.3}
-            pointerEvents="none"
-          />
-          <AreaClosed
-            data={data}
-            x={(d) => dateScale(getDate(d)) ?? 0}
-            y={(d) => balanceValueScale(getBalanceValue(d)) ?? 0}
-            yScale={balanceValueScale}
-            strokeWidth={2}
-            stroke="url(#area-gradient)"
-            fill="url(#area-gradient)"
-            curve={curveMonotoneX}
-          />
-          <AreaClosed
-            data={data}
-            x={(d) => dateScale(getDate(d)) ?? 0}
-            y={(d) => balanceValueScale(getPrincipleValue(d)) ?? 0}
-            yScale={balanceValueScale}
-            strokeWidth={2}
-            stroke="url(#principle-gradient)"
-            fill="url(#principle-gradient)"
-            curve={curveMonotoneX}
-          />
-          <AreaClosed
-            data={data}
-            x={(d) => dateScale(getDate(d)) ?? 0}
-            y={(d) => balanceValueScale(getInterestValue(d)) ?? 0}
-            yScale={balanceValueScale}
-            strokeWidth={2}
-            stroke="url(#interest-gradient)"
-            fill="url(#interest-gradient)"
-            curve={curveMonotoneX}
-          />
-          <Bar
-            x={margin.left}
-            y={margin.top}
-            width={innerWidth}
-            height={innerHeight}
-            fill="transparent"
-            rx={14}
-            onTouchStart={handleTooltip}
-            onTouchMove={handleTooltip}
-            onMouseMove={handleTooltip}
-            onMouseLeave={() => hideTooltip()}
-          />
-          <AxisLeft left={margin.left} scale={balanceValueScale} />
-          {tooltipData && (
-            <g>
-              <Line
-                from={{ x: tooltipLeft, y: margin.top }}
-                to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-                stroke={accentColorDark}
-                strokeWidth={2}
-                pointerEvents="none"
-                strokeDasharray="5,2"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop + 1}
-                r={4}
-                fill="black"
-                fillOpacity={0.1}
-                stroke="black"
-                strokeOpacity={0.1}
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop}
-                r={4}
-                fill={accentColorDark}
-                stroke="white"
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipData.interestTop}
-                r={4}
-                fill={accentColorDark}
-                stroke="white"
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipData.principleTop}
-                r={4}
-                fill={accentColorDark}
-                stroke="white"
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-            </g>
-          )}
-        </svg>
-        {tooltipData && (
-          <div>
-            <TooltipWithBounds
-              key={Math.random()}
-              top={tooltipData.interestTop - 12}
-              left={tooltipLeft + 12}
-              style={tooltipStyles}
-            >
-              <div className={classes.tooltipLine}>
-                <div className={classes.tooltipInterest}>
-                  Interest: ${formatMoney(getInterestValue(tooltipData.d), 2)}
-                </div>
-                <div className={classes.tooltipBalance}>
-                  Balance: ${formatMoney(getBalanceValue(tooltipData.d), 2)}
-                </div>
-                <div className={classes.tooltipPrinciple}>
-                  Principle: ${formatMoney(getPrincipleValue(tooltipData.d), 2)}
-                </div>
-              </div>
-            </TooltipWithBounds>
-            <Tooltip
-              top={innerHeight + margin.top}
-              left={tooltipLeft}
-              style={{
-                ...defaultStyles,
-                minWidth: 72,
-                lineHeight: '1rem',
-                textAlign: 'center',
-                transform: 'translateX(-50%)',
-                whiteSpace: 'nowrap',
-                color: '#444',
-              }}
-            >
-              {formatDate(getDate(tooltipData.d))}
-            </Tooltip>
-          </div>
-        )}
-      </div>
-    );
-  }
-);
+import { AreaChart } from './AreaChart';
+import './../calculator-style.scss';
 
 const useStyle = makeStyles({
   container: {
@@ -405,16 +74,16 @@ const useStyle = makeStyles({
     zIndex: 1,
   },
   colRight: {
-    display: 'flex',
+    display: ({ isSmallScreen }) => (isSmallScreen === true ? 'block' : 'flex'),
     marginBottom: '10rem',
     // alignContent: 'space-between',
     '& > div': {
-      flex: '0 1 50%',
-      maxWidth: '50%',
-      display: 'block',
-    },
-    '& > div:nth-of-type(2)': {
       height: 0,
+      display: 'block',
+      flex: ({ isSmallScreen }) =>
+        console.log('check', isSmallScreen) ||
+        (isSmallScreen ? undefined : '0 1 50%'),
+      maxWidth: ({ isSmallScreen }) => (isSmallScreen ? 'auto' : '50%'),
       paddingBottom: '32%',
       position: 'relative',
       '& > div': {
@@ -531,80 +200,101 @@ export const PageMortgageCalculator = () => {
     setState((s) => ({ ...s, chartData, paymentData }));
   };
 
-  const classes = useStyle();
+  const isSmallScreen = useMediaQuery('(max-width: 1024px)');
+  const classes = useStyle({ isSmallScreen });
   const chartContainerRef = useRef();
+  const pieChartContainerRef = useRef();
   const containerSize = useSize({ ref: chartContainerRef });
+  const pieContainerSize = useSize({ ref: pieChartContainerRef });
 
   return (
     <Layout variant="fill" className={classes.layout}>
       <Section>
-        <div className={clsx(classes.col, classes.colLeft)}>
-          <div className={classes.lineContainer}>
-            <div>
-              I want to buy a home valued at ${' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputPurchaseValue)}
-                type="number"
-                value={purchaseValue}
-                onChange={handlePartialUpdate('purchaseValue')}
-              />
-            </div>
-            <div>
-              with a down payment of ${' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputDownPaymentValue)}
-                type="number"
-                value={downPaymentValue}
-                onChange={handlePartialUpdate('downPaymentValue')}
-              />
-            </div>
-            <div>
-              with an interest rate of %{' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputInterestRateValue)}
-                type="number"
-                value={interestRateValue}
-                onChange={handlePartialUpdate('interestRateValue')}
-              />{' '}
-              for{' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputLoadDurationValue)}
-                type="number"
-                value={loanDurationValue}
-                onChange={handlePartialUpdate('loanDurationValue')}
-              />{' '}
-              years
-            </div>
-            <div>
-              <Button
-                className={classes.buttonCalculate}
-                onClick={handleCalculate}
-                size="large"
-              >
-                Estimate
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className={classes.colRight}>
-          <div>
-            {paymentData && (
-              <PieChart width={340} height={340} data={paymentData} />
-            )}
-          </div>
-          <div>
-            <div ref={chartContainerRef}>
-              {containerSize.isReady && chartData && (
-                <Sample
-                  width={containerSize.width}
-                  height={containerSize.height}
-                  margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
-                  data={chartData}
+        <Header>Mortgage calculator</Header>
+        <Section.Part>
+          <div className={clsx(classes.col, classes.colLeft)}>
+            <div className={classes.lineContainer}>
+              <div>
+                I want to buy a home valued at ${' '}
+                <TextField
+                  className={clsx(classes.inputs, classes.inputPurchaseValue)}
+                  type="number"
+                  value={purchaseValue}
+                  onChange={handlePartialUpdate('purchaseValue')}
                 />
-              )}
+              </div>
+              <div>
+                with a down payment of ${' '}
+                <TextField
+                  className={clsx(
+                    classes.inputs,
+                    classes.inputDownPaymentValue
+                  )}
+                  type="number"
+                  value={downPaymentValue}
+                  onChange={handlePartialUpdate('downPaymentValue')}
+                />
+              </div>
+              <div>
+                with an interest rate of %{' '}
+                <TextField
+                  className={clsx(
+                    classes.inputs,
+                    classes.inputInterestRateValue
+                  )}
+                  type="number"
+                  value={interestRateValue}
+                  onChange={handlePartialUpdate('interestRateValue')}
+                />{' '}
+                for{' '}
+                <TextField
+                  className={clsx(
+                    classes.inputs,
+                    classes.inputLoadDurationValue
+                  )}
+                  type="number"
+                  value={loanDurationValue}
+                  onChange={handlePartialUpdate('loanDurationValue')}
+                />{' '}
+                years
+              </div>
+              <div>
+                <Button
+                  className={classes.buttonCalculate}
+                  onClick={handleCalculate}
+                  size="large"
+                >
+                  Estimate
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+          <div className={classes.colRight}>
+            <div>
+              <div ref={pieChartContainerRef}>
+                {pieContainerSize.isReady && paymentData && (
+                  <PieChart
+                    width={pieContainerSize.width}
+                    height={pieContainerSize.height}
+                    data={paymentData}
+                  />
+                )}
+              </div>
+            </div>
+            <div>
+              <div ref={chartContainerRef}>
+                {containerSize.isReady && chartData && (
+                  <AreaChart
+                    width={containerSize.width}
+                    height={containerSize.height}
+                    margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
+                    data={chartData}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </Section.Part>
       </Section>
     </Layout>
   );

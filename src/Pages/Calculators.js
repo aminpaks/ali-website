@@ -4,8 +4,9 @@ import * as d3 from 'd3';
 import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
 import clsx from 'clsx';
 import './calculator-style.scss';
-import { Layout, Button, Section } from '../UI';
+import { Layout, Button, Section, Header } from '../UI';
 import { apiRequest } from '../fetch';
+import { getUserSessionId, setUserSessionId } from '../Utils';
 
 const useStyle = makeStyles({
   container: {
@@ -139,24 +140,21 @@ export const PageCalculators = () => {
       { url: '/calculators' },
       {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        // mode: 'no-cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        // credentials: 'same-origin', // include, *same-origin, omit
         headers: {
           'Content-Type': 'application/json',
-          // 'Content-Type': 'application/x-www-form-urlencoded',
         },
-        // redirect: 'follow', // manual, *follow, error
-        // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify({
           initialAmount,
           duration: investDuration,
           cycleType,
           cycleAmount,
+          session: getUserSessionId(),
         }), // body data type must match "Content-Type" header
       }
     )
       .then(({ data }) => {
+        setUserSessionId(data.session);
         drawChart(
           data,
           (investValueEduFina, topEduFina, investValueBank, topBank) => {
@@ -192,62 +190,63 @@ export const PageCalculators = () => {
     return () => window.removeEventListener('resize', handleWindowResize);
   });
 
-  console.log('render', 'loading', investValueState);
-
   return (
     <Layout variant="fill">
       <Section>
-        <div className={clsx(classes.col, classes.colLeft)}>
-          <div className={classes.lineContainer}>
-            <div>
-              I want to invest an initial amount of ${' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputInitialAmount)}
-                type="number"
-                value={initialAmount}
-                onChange={handlePartialUpdate('initialAmount')}
-              />
-            </div>
-            <div>
-              for{' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputDuration)}
-                type="number"
-                value={investDuration}
-                onChange={handlePartialUpdate('investDuration')}
-              />{' '}
-              years
-            </div>
-            <div>
-              with{' '}
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={cycleType}
-                onChange={handlePartialUpdate('cycleType')}
-              >
-                <MenuItem value="monthly">monthly</MenuItem>
-                <MenuItem value="biweekly">biweekly</MenuItem>
-              </Select>{' '}
-              investments of ${' '}
-              <TextField
-                className={clsx(classes.inputs, classes.inputInvestAmount)}
-                type="number"
-                value={cycleAmount}
-                onChange={handlePartialUpdate('cycleAmount')}
-              />
-            </div>
-            <div>
-              <Button
-                className={classes.buttonCalculate}
-                onClick={handleCalculate}
-                disabled={investValueState.isLoading}
-              >
-                Show me results
-              </Button>
+        <Header>Investment</Header>
+        <Section.Part>
+          <div className={clsx(classes.col, classes.colLeft)}>
+            <div className={classes.lineContainer}>
+              <div>
+                I want to invest an initial amount of ${' '}
+                <TextField
+                  className={clsx(classes.inputs, classes.inputInitialAmount)}
+                  type="number"
+                  value={initialAmount}
+                  onChange={handlePartialUpdate('initialAmount')}
+                />
+              </div>
+              <div>
+                for{' '}
+                <TextField
+                  className={clsx(classes.inputs, classes.inputDuration)}
+                  type="number"
+                  value={investDuration}
+                  onChange={handlePartialUpdate('investDuration')}
+                />{' '}
+                years
+              </div>
+              <div>
+                with{' '}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={cycleType}
+                  onChange={handlePartialUpdate('cycleType')}
+                >
+                  <MenuItem value="monthly">monthly</MenuItem>
+                  <MenuItem value="biweekly">biweekly</MenuItem>
+                </Select>{' '}
+                investments of ${' '}
+                <TextField
+                  className={clsx(classes.inputs, classes.inputInvestAmount)}
+                  type="number"
+                  value={cycleAmount}
+                  onChange={handlePartialUpdate('cycleAmount')}
+                />
+              </div>
+              <div>
+                <Button
+                  className={classes.buttonCalculate}
+                  onClick={handleCalculate}
+                  disabled={investValueState.isLoading}
+                >
+                  Show me results
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        </Section.Part>
         <div
           className={clsx(
             classes.col,
@@ -318,8 +317,6 @@ function drawChart(dataInput, callback) {
   const { y, width, height } = document
     .querySelector('.chart-wrapper')
     ?.getBoundingClientRect() ?? { y: 0 };
-  // const width = window.innerWidth;
-  // const height = window.innerHeight - y;
 
   $('#chart-container').css({ top: y, height });
 
@@ -332,9 +329,7 @@ function drawChart(dataInput, callback) {
   }
   svg.attr('width', width).attr('height', height);
 
-  const { invest, bankInvest, investMinMax, bankInvestMinMax } = dataInput;
-  const dataA = invest.slice((invest.length / 2) * -1);
-  const dataB = bankInvest.slice((bankInvest.length / 2) * -1);
+  const { edufinaInvest: dataA, bankInvest: dataB } = dataInput;
 
   // X Scale
   const scaleX = d3
@@ -445,22 +440,15 @@ function drawChart(dataInput, callback) {
           })
       );
 
-    const [lowA, highA] = investMinMax;
-    const [lowB, highB] = bankInvestMinMax;
+    const highA = dataA[dataA.length - 1];
+    const highB = dataB[dataB.length - 1];
 
-    const valueA = `$${formatMoney(lowA)} - $${formatMoney(highA)}`;
-    const valueB = `$${formatMoney(lowB)} - $${formatMoney(highB)}`;
+    const valueA = `$${formatMoney(highA)}`;
+    const valueB = `$${formatMoney(highB)}`;
 
-    console.log('A', lowA, highA, scaleY(highA), scaleY(highB));
-    console.log('B', lowB.toFixed(2), highB.toFixed(2));
+    console.log('A', highA, highB, scaleY(highA), scaleY(highB));
+    console.log('B', highA.toFixed(2), highB.toFixed(2));
 
     callback(valueA, scaleY(highA), valueB, scaleY(highB));
-
-    // $('#dollar-value-a')
-    //   .text(valueA)
-    //   .css({ top: scaleY(highA) });
-    // $('#dollar-value-b')
-    //   .text(valueB)
-    //   .css({ top: scaleY(highB) });
   }, 1000);
 }
