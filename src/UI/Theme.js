@@ -12,15 +12,11 @@ const theme = createMuiTheme({
   },
   palette: {
     primary: {
-      light: '#fff',
-      main: '#fff',
-      // dark: '#fff',
-      contrastText: '#fff',
+      main: '#444',
     },
     secondary: {
       light: '#000',
       main: '#ddd',
-      // dark: '#fff',
       contrastText: '#000',
     },
     accent: {
@@ -36,8 +32,10 @@ const theme = createMuiTheme({
       text: {
         fontFamily: 'inherit',
       },
-      containedPrimary: {
-        color: 'black',
+    },
+    MuiTypography: {
+      h3: {
+        fontSize: '2rem',
       },
     },
     MuiCssBaseline: {

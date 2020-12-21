@@ -11,45 +11,20 @@ const useStyles = makeStyles({
     },
   },
   imgContainer: {
-    display: 'flex',
-    justifyContent: 'center',
+    display: 'block',
+    columnCount: 3,
+    columnGap: '2rem',
     '& > span': {
-      flex: '0 1 auto',
       display: 'block',
+      margin: '0 auto',
       '& > img': {
-        margin: 0,
+        margin: '0 auto',
         display: 'block',
-        padding: '0 1rem',
         width: '100%',
-        height: 'auto',
-        top: '50%',
-        transform: 'translate(0, -50%)',
-        position: 'relative',
       },
     },
-    '&.is-not-desktop': {
-      flexWrap: 'wrap',
-      '& > span': {
-        flex: '0 3 auto',
-      },
-      '& > span:nth-child(1)': {
-        flexBasis: '16%',
-      },
-      '& > span:nth-child(2)': {
-        flexBasis: '28%',
-      },
-      '& > span:nth-child(3)': {
-        flexBasis: '56%',
-      },
-      '& > span:nth-child(4)': {
-        flexBasis: '22%',
-      },
-      '& > span:nth-child(5)': {
-        flexBasis: '22%',
-      },
-      '& > span:nth-child(6)': {
-        flexBasis: '30%',
-      },
+    '&.is-desktop': {
+      columnCount: 6,
     },
   },
 });
@@ -65,7 +40,7 @@ export const Toolbox = () => {
       <article>
         <div
           className={clsx(classes.imgContainer, {
-            'is-not-desktop': !isDesktop,
+            'is-desktop': isDesktop,
           })}
         >
           <span>

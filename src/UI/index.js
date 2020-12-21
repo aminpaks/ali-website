@@ -3,6 +3,7 @@ export * from './Header';
 export * from './Image';
 export * from './Layout';
 export * from './LayoutHome';
+export * from './Location';
 export * from './mediaQueries';
 export * from './Nav';
 export * from './Section';

@@ -7,9 +7,6 @@ const useSectionStyle = makeStyles(({ breakpoints }) => ({
     '& h1,h2,h3': {
       marginTop: 0,
     },
-    [breakpoints.up('md')]: {
-      paddingBottom: '6rem',
-    },
   },
 }));
 
@@ -23,7 +20,6 @@ const paddingTopSmall = ({ bgColor }) => {
 const usePartStyle = makeStyles(({ breakpoints, palette }) => ({
   root: {
     marginTop: '3rem',
-    marginBottom: '3rem',
     '&:not(:first-of-type)': {
       paddingTop: paddingTopSmall,
       [breakpoints.up('md')]: {
@@ -31,6 +27,7 @@ const usePartStyle = makeStyles(({ breakpoints, palette }) => ({
       },
     },
     '&:not(:last-of-type)': {
+      marginBottom: '3rem',
       paddingBottom: paddingTopSmall,
       [breakpoints.up('md')]: {
         paddingBottom: paddingLarge,
@@ -39,6 +36,10 @@ const usePartStyle = makeStyles(({ breakpoints, palette }) => ({
     color: ({ bgColor }) => (bgColor === 'accent' ? '#fff' : undefined),
     backgroundColor: ({ bgColor }) =>
       bgColor === 'accent' ? palette.accent.main : undefined,
+    '&.is-compact': {
+      paddingTop: '0 !important',
+      paddingBottom: '0 !important',
+    },
   },
   container: {
     [breakpoints.up('md')]: {
@@ -71,7 +72,11 @@ const Part = ({
   const classes = usePartStyle({ bgColor, type });
 
   return (
-    <article className={clsx(classes.root, className)}>
+    <article
+      className={clsx(classes.root, className, {
+        'is-compact': type === 'compact',
+      })}
+    >
       <Container component={component} className={classes.container}>
         {children}
       </Container>

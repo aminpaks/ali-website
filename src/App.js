@@ -11,7 +11,7 @@ import {
   PageInvestCalculator,
   PageMortgageCalculator,
 } from './Pages';
-import { Nav, Theme } from './UI';
+import { Location, Nav, Theme } from './UI';
 
 const queryClient = new QueryClient();
 
@@ -38,6 +38,7 @@ function App() {
             <Theme>
               <div className="App">
                 <Nav />
+                <Location />
                 <Switch>
                   <Route path="/articles">
                     <PageArticles />

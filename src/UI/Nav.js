@@ -5,20 +5,29 @@ import React, {
   useState,
   forwardRef,
 } from 'react';
-import { clsx } from '../dependencies';
-import { Link, useLocation } from 'react-router-dom';
-import { Container, makeStyles } from '@material-ui/core';
-import { useOutsideClick } from '../Utils/OutsideClick';
+import {
+  clsx,
+  Link,
+  useLocation,
+  Container,
+  makeStyles,
+} from '../dependencies';
+import { useOutsideClick } from '../Utils';
+import { iPhoneLandscapeMediaQuery } from './mediaQueries';
 
-const useNavButtonStyle = makeStyles({
+const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
   navButton: {
     width: 36,
     height: 36,
     padding: 9,
     margin: -9,
+    marginRight: 6,
     borderRadius: 2,
     cursor: 'pointer',
     zIndex: 2,
+    [breakpoints.up('sm')]: {
+      marginRight: 4,
+    },
     '&,& span': {
       display: 'block',
     },
@@ -53,6 +62,14 @@ const useNavButtonStyle = makeStyles({
       },
     },
     '&.is-open': {
+      '&:hover > span': {
+        backgroundColor: palette.accent.main,
+        '& > span': {
+          '&::before,&::after': {
+            backgroundColor: '#fff',
+          },
+        },
+      },
       '& > span': {
         '& > span': {
           backgroundColor: 'transparent',
@@ -68,7 +85,7 @@ const useNavButtonStyle = makeStyles({
       },
     },
   },
-});
+}));
 
 const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   const classes = useNavButtonStyle({ open: isOpen });
@@ -85,7 +102,7 @@ const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   );
 });
 
-const useStyle = makeStyles(({ palette }) => ({
+const useStyle = makeStyles(({ palette, breakpoints }) => ({
   root: {
     top: 0,
     left: 0,
@@ -107,38 +124,67 @@ const useStyle = makeStyles(({ palette }) => ({
       color: '#ce021f',
     },
   },
-  nav: {
+  navContainer: {
     display: 'flex',
     flex: '1 0 auto',
     justifyContent: 'flex-end',
     position: 'relative',
-    // border: '1px solid',
 
-    '& nav': {
-      top: '-1.45em',
-      right: ({ open }) => (open === true ? '-2em ' : '-1.45em'),
+    '& > nav': {
+      top: -24,
+      right: -24,
+      width: 0,
+      height: 0,
       display: 'block',
       position: 'absolute',
       overflow: 'hidden',
-      padding: '2em',
+      padding: 20,
+      paddingTop: 56,
       borderRadius: '0.4em',
       border: '1px solid #eee',
       boxSizing: 'content-box',
-      backgroundColor: ({ open }) => (open === true ? '#fff' : 'transparent'),
-
-      borderColor: ({ open }) =>
-        open === true ? 'rgba(0,0,0,0.16)' : 'rgba(0,0,0,0)',
-      boxShadow: ({ open }) =>
-        open === true ? '0 0 8px rgba(0,0,0,0.1)' : '0 0 0px rgba(0,0,0,0)',
-      transition: ({ open }) =>
-        open === true
-          ? '180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height'
-          : '180ms ease-in-out all, 160ms 140ms ease-out width, 200ms ease-in height',
-      width: ({ open, client }) => (open === true ? client.width : 0),
-      height: ({ open, client }) => (open === true ? client.height : 0),
+      backgroundColor: 'transparent',
+      borderColor: 'rgba(0,0,0,0)',
+      boxShadow: '0 0 0px rgba(0,0,0,0)',
+      transition:
+        '180ms ease-in-out all, 160ms 140ms ease-out width, 200ms ease-in height',
       '& > span': {
         display: 'block',
-        paddingTop: '2em',
+      },
+    },
+    '&.is-open > nav': {
+      top: -20,
+      right: -6,
+      width: 'var(--expandedWidth)',
+      height: 'var(--expandedHeight)',
+      backgroundColor: '#fff',
+      borderColor: 'rgba(0,0,0,0.16)',
+      boxShadow: '0 0 8px rgba(0,0,0,0.1)',
+      transition:
+        '180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height',
+    },
+    [iPhoneLandscapeMediaQuery]: {
+      '& > nav': {
+        top: -30,
+        right: -60,
+        position: 'fixed',
+        padding: 40,
+        paddingTop: 70,
+        boxSizing: 'border-box',
+        '& > span': {
+          height: '100%',
+          overflow: 'scroll',
+          '& > span': {
+            display: 'block',
+            paddingRight: 20,
+          },
+        },
+      },
+      '&.is-open > nav': {
+        top: 0,
+        right: 0,
+        width: '100vw',
+        height: '100vh',
       },
     },
     '& a': {
@@ -245,32 +291,43 @@ export const Nav = () => {
               Edu<span>Fina</span>
             </h1>
           </Link>
-          <div className={classes.nav}>
+          <div
+            className={clsx(classes.navContainer, { 'is-open': open })}
+            style={{
+              '--expandedWidth': client.width + 'px',
+              '--expandedHeight': client.height + 'px',
+            }}
+          >
             <NavButton
               ref={navLinkRef}
               isOpen={open}
               onClick={handleMenuToggle}
             />
             <nav ref={navRef} onClick={handleNavLinkClick}>
-              <span>
-                <Link to="/">
-                  <span>Home</span>
-                </Link>
-                <Link to="/checkout">
-                  <span>Checkout</span>
-                </Link>
-                <Link to="/investment-calculator">
-                  <span>Investment calculator</span>
-                </Link>
-                <Link to="/mortgage-calculator">
-                  <span>Mortgage calculator</span>
-                </Link>
-                <Link to="/articles">
-                  <span>Articles</span>
-                </Link>
-                <Link to="/about-us">
-                  <span>About Us</span>
-                </Link>
+              <span className="real-links-container">
+                <span className="real-links-wrapper">
+                  <Link to="/">
+                    <span>Home</span>
+                  </Link>
+                  <Link to="/checkout">
+                    <span>Checkout</span>
+                  </Link>
+                  <Link to="/investment-calculator">
+                    <span>Investment calculator</span>
+                  </Link>
+                  <Link to="/mortgage-calculator">
+                    <span>Mortgage calculator</span>
+                  </Link>
+                  <Link to="/articles">
+                    <span>Articles</span>
+                  </Link>
+                  <Link to="/about-us">
+                    <span>About Us</span>
+                  </Link>
+                  <Link to="/contact">
+                    <span>Contact</span>
+                  </Link>
+                </span>
               </span>
               <span ref={placeholderRef} className={classes.navPlaceholder}>
                 <Link to="/">Home</Link>
@@ -279,6 +336,7 @@ export const Nav = () => {
                 <Link to="/">Mortgage calculator</Link>
                 <Link to="/">Articles</Link>
                 <Link to="/">About Us</Link>
+                <Link to="/">Contact</Link>
               </span>
             </nav>
           </div>
