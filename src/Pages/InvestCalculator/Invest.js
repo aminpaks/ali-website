@@ -1,6 +1,4 @@
-import $ from 'jquery';
 import { useRef, useState } from 'react';
-import * as d3 from 'd3';
 import {
   clsx,
   InputAdornment,
@@ -16,7 +14,6 @@ import { Layout, Button, Section, Header, useSize } from '../../UI';
 import { apiRequest } from '../../fetch';
 import {
   getUserSessionId,
-  noop,
   setUserSessionId,
   getPartialUpdate,
 } from '../../Utils';
