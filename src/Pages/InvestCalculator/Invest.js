@@ -1,14 +1,26 @@
-import React, { useCallback, useState } from 'react';
-import clsx from 'clsx';
 import $ from 'jquery';
+import { useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
-import LoopIcon from '@material-ui/icons/Loop';
-import './calculator-style.scss';
-import { Layout, Button, Section, Header, useWindowResize } from '../../UI';
+import {
+  clsx,
+  InputAdornment,
+  makeStyles,
+  MenuItem,
+  Select,
+  TextField,
+  AttachMoneyIcon,
+  LoopIcon,
+  useMutation,
+} from '../../dependencies';
+import { Layout, Button, Section, Header, useSize } from '../../UI';
 import { apiRequest } from '../../fetch';
-import { getUserSessionId, noop, setUserSessionId } from '../../Utils';
-import { Counter } from './countUp';
+import {
+  getUserSessionId,
+  noop,
+  setUserSessionId,
+  getPartialUpdate,
+} from '../../Utils';
+import { InvestChart } from './InvestChart';
 
 const useStyle = makeStyles(({ breakpoints }) => ({
   container: {
@@ -66,6 +78,8 @@ const useStyle = makeStyles(({ breakpoints }) => ({
   buttonCalculate: {
     fontSize: '1.8rem',
     '& svg': {
+      width: '2rem',
+      height: '2rem',
       animation: '$rotate 1000ms',
       animationIterationCount: 'infinite',
     },
@@ -86,6 +100,11 @@ const useStyle = makeStyles(({ breakpoints }) => ({
   colRight: {},
 
   chartContainer: {
+    '& .chart-wrapper': {
+      height: '100%',
+      width: '100%',
+      position: 'relative',
+    },
     [breakpoints.down('md')]: {
       width: '100%',
       height: 600,
@@ -99,50 +118,13 @@ const useStyle = makeStyles(({ breakpoints }) => ({
       position: 'fixed',
     },
   },
-
-  investValueLabel: {
-    top: '100vh',
-    right: 0,
-    fontSize: '1.5rem',
-    marginTop: '-2rem',
-    lineHeight: '2rem',
-    position: 'absolute',
-    minWidth: '36vw',
-    transition: '500ms ease',
-    '&.count-in': {
-      transition: '1s',
-    },
-    borderBottom: '2px dotted #000',
-    textShadow: '0 0 4px #fff',
-    pointerEvents: 'none',
-    '& span': {
-      display: 'block',
-      '&:nth-of-type(2)': {
-        position: 'absolute',
-        fontSize: '1rem',
-      },
-    },
-  },
-  investValueBank: {
-    borderBottomColor: '#c91f17',
-  },
-  investValueEduFina: {
-    borderBottomColor: '#0063b2',
-  },
 }));
-
-const InvestValueInitial = {
-  isLoading: false,
-  investValueEduFina: 0,
-  investValueBank: 0,
-  topEduFina: undefined,
-  topBank: undefined,
-  date: null,
-  error: null,
-};
 
 export const PageInvestCalculator = () => {
   const classes = useStyle();
+
+  const chartContainerRef = useRef();
+  const chartContainerSize = useSize({ ref: chartContainerRef });
 
   const [state, setState] = useState({
     initialAmount: 1000,
@@ -152,84 +134,38 @@ export const PageInvestCalculator = () => {
   });
   const { initialAmount, investDuration, cycleType, cycleAmount } = state;
 
-  const [investValueState, setInvestValueState] = useState(InvestValueInitial);
-
-  const handlePartialUpdate = useCallback(
-    (prop) => ({ target }) => setState((v) => ({ ...v, [prop]: target.value })),
-    []
+  const { mutate: queryInvest, isLoading, data } = useMutation(
+    doQueryInvestment,
+    {
+      retry: false,
+    }
   );
+
   const handleCalculate = () => {
-    setInvestValueState((s) => ({ ...s, isLoading: true }));
-    apiRequest(
-      { url: '/calculators' },
-      {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          initialAmount,
-          duration: investDuration,
-          cycleType,
-          cycleAmount,
-          sessionId: getUserSessionId(),
-        }),
-      }
-    )
-      .then(({ data }) => {
-        if (data.sessionId) {
-          setUserSessionId(data.sessionId);
-        }
-        drawChart(
-          data,
-          (investValueEduFina, topEduFina, investValueBank, topBank) => {
-            setInvestValueState(() => ({
-              isLoading: false,
-              data,
-              topBank,
-              topEduFina,
-              investValueBank,
-              investValueEduFina,
-            }));
-          }
-        );
-      })
-      .catch((error) => {
-        setInvestValueState({ ...InvestValueInitial, error });
-      });
+    queryInvest(state);
   };
 
-  useWindowResize(() => {
-    if (investValueState.isLoading === false && investValueState.data != null) {
-      drawChart(
-        investValueState.data,
-        (_, topEduFina, __, topBank) => {
-          setInvestValueState((s) => ({
-            ...s,
-            topBank,
-            topEduFina,
-          }));
-        },
-        true
-      );
-    }
-  });
-
   return (
-    <Layout variant="fill">
+    <Layout variant="fill" footer="hidden">
       <Section>
         <Header>Investment</Header>
         <Section.Part>
           <div className={clsx(classes.col, classes.colLeft)}>
             <div className={classes.lineContainer}>
               <div>
-                I want to invest an initial amount of ${' '}
+                I want to invest an initial amount of{' '}
                 <TextField
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoneyIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                   className={clsx(classes.inputs, classes.inputInitialAmount)}
                   type="number"
                   value={initialAmount}
-                  onChange={handlePartialUpdate('initialAmount')}
+                  onChange={getPartialUpdate(setState, 'initialAmount')}
                 />
               </div>
               <div>
@@ -238,7 +174,7 @@ export const PageInvestCalculator = () => {
                   className={clsx(classes.inputs, classes.inputDuration)}
                   type="number"
                   value={investDuration}
-                  onChange={handlePartialUpdate('investDuration')}
+                  onChange={getPartialUpdate(setState, 'investDuration')}
                 />{' '}
                 years
               </div>
@@ -248,25 +184,32 @@ export const PageInvestCalculator = () => {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={cycleType}
-                  onChange={handlePartialUpdate('cycleType')}
+                  onChange={getPartialUpdate(setState, 'cycleType')}
                 >
                   <MenuItem value="monthly">monthly</MenuItem>
                   <MenuItem value="biweekly">biweekly</MenuItem>
                 </Select>{' '}
-                investments of ${' '}
+                investments of{' '}
                 <TextField
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoneyIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                   className={clsx(classes.inputs, classes.inputInvestAmount)}
                   type="number"
                   value={cycleAmount}
-                  onChange={handlePartialUpdate('cycleAmount')}
+                  onChange={getPartialUpdate(setState, 'cycleAmount')}
                 />
               </div>
               <div>
                 <Button
                   className={classes.buttonCalculate}
                   onClick={handleCalculate}
-                  disabled={investValueState.isLoading}
-                  startIcon={investValueState.isLoading && <LoopIcon />}
+                  disabled={isLoading}
+                  endIcon={isLoading && <LoopIcon />}
                 >
                   Show me results
                 </Button>
@@ -282,41 +225,16 @@ export const PageInvestCalculator = () => {
               classes.chartContainer
             )}
           >
-            <div className="chart-wrapper">
+            <div ref={chartContainerRef} className="chart-wrapper">
+              {chartContainerSize.isReady && (
+                <InvestChart
+                  data={data}
+                  width={chartContainerSize.width}
+                  height={chartContainerSize.height}
+                />
+              )}
               <div id="invest-chart" />
             </div>
-            {typeof investValueState.topEduFina === 'number' && (
-              <div
-                style={{ top: investValueState.topEduFina }}
-                className={clsx(
-                  classes.investValueLabel,
-                  classes.investValueEduFina,
-                  { 'count-in': investValueState.investValueEduFina > 0 }
-                )}
-              >
-                <Counter
-                  value={investValueState.investValueEduFina ?? 0}
-                  onDisplayValue={displayMoney}
-                />
-                <span>EduFina</span>
-              </div>
-            )}
-            {typeof investValueState.topBank === 'number' && (
-              <div
-                style={{ top: investValueState.topBank }}
-                className={clsx(
-                  classes.investValueLabel,
-                  classes.investValueBank,
-                  { 'count-in': investValueState.investValueEduFina > 0 }
-                )}
-              >
-                <Counter
-                  value={investValueState.investValueBank ?? 0}
-                  onDisplayValue={displayMoney}
-                />
-                <span>Traditional Bank</span>
-              </div>
-            )}
           </div>
         </Section.Part>
       </Section>
@@ -324,180 +242,32 @@ export const PageInvestCalculator = () => {
   );
 };
 
-function displayMoney(count) {
-  return '$' + formatMoney(count);
-}
-function formatMoney(amount, decimalCount = 2, decimal = '.', thousands = ',') {
-  try {
-    decimalCount = Math.abs(decimalCount);
-    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-
-    const negativeSign = amount < 0 ? '-' : '';
-
-    let i = parseInt(
-      (amount = Math.abs(Number(amount) || 0).toFixed(decimalCount))
-    ).toString();
-    let j = i.length > 3 ? i.length % 3 : 0;
-
-    return (
-      negativeSign +
-      (j ? i.substr(0, j) + thousands : '') +
-      i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thousands) +
-      (decimalCount
-        ? decimal +
-          Math.abs(amount - i)
-            .toFixed(decimalCount)
-            .slice(2)
-        : '')
-    );
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-let to = undefined;
-function drawChart(dataInput, callback = noop, immediate = false) {
-  if (to) {
-    clearTimeout(to);
-    to = undefined;
-  }
-  const { y, width, height } = document
-    .querySelector('.chart-wrapper')
-    ?.getBoundingClientRect() ?? { y: 0 };
-
-  $('#chart-container').css({ top: y, height });
-
-  let svg;
-  const s1 = d3.select('#invest-chart svg');
-  if (s1.size() > 0) {
-    svg = s1;
-  } else {
-    svg = d3.select('#invest-chart').append('svg');
-  }
-  svg.attr('width', width).attr('height', height);
-
-  const { edufinaInvest: dataA, bankInvest: dataB } = dataInput;
-
-  // X Scale
-  const scaleX = d3
-    .scaleLinear()
-    .domain([0, dataA.length - 1])
-    .range([0, width]);
-
-  // Y Scale
-  const scaleY = d3
-    .scaleLinear()
-    .domain([dataA[0], d3.max(dataA)])
-    .range([height, 0]);
-  const scaleY2 = d3
-    .scaleLinear()
-    .domain([dataB[0], d3.max(dataA)])
-    .range([height, 0]);
-
-  // Add the area
-  let areaA;
-  const arA = d3.select('#invest-area');
-  if (arA.size() > 0) {
-    areaA = arA;
-  } else {
-    areaA = svg
-      .append('path')
-      .attr('id', 'invest-area')
-      .attr('fill', '#0063b2')
-      .attr('stroke', '#003f72')
-      .attr('stroke-width', 2);
-  }
-
-  let areaB;
-  const arB = d3.select('#invest-bank-area');
-  if (arB.size() > 0) {
-    areaB = arB;
-  } else {
-    areaB = svg
-      .append('path')
-      .attr('id', 'invest-bank-area')
-      .attr('fill', '#c91f17')
-      .attr('stroke', '#a01812')
-      .attr('stroke-width', 1.5);
-  }
-
-  const _transOut = d3.transition().ease(d3.easeQuadOut).duration(500);
-
-  areaA
-    .datum(dataA)
-    .transition(_transOut)
-    .attr(
-      'd',
-      d3
-        .area()
-        .x(function (d, i) {
-          return scaleX(i);
-        })
-        .y0(scaleY(dataA[0]))
-        .y1(scaleY(dataA[0]))
-    );
-  areaB
-    .datum(dataB)
-    .transition(_transOut)
-    .attr(
-      'd',
-      d3
-        .area()
-        .x(function (d, i) {
-          return scaleX(i);
-        })
-        .y0(scaleY2(dataB[0]))
-        .y1(scaleY2(dataB[0]))
-    );
-
-  if (immediate !== true) {
-    callback(0, height, 0, height);
-  }
-
-  to = setTimeout(
-    () => {
-      const _trans = d3.transition().ease(d3.easeCubicOut).duration(1000);
-
-      areaA
-        .datum(dataA)
-        .transition(_trans)
-        .attr(
-          'd',
-          d3
-            .area()
-            .x(function (d, i) {
-              return scaleX(i);
-            })
-            .y0(scaleY(dataA[0]))
-            .y1(function (d) {
-              return scaleY(d);
-            })
-        );
-
-      areaB
-        .datum(dataB)
-        .transition(_trans)
-        .attr(
-          'd',
-          d3
-            .area()
-            .x(function (d, i) {
-              return scaleX(i);
-            })
-            .y0(scaleY2(0))
-            .y1(function (d) {
-              return scaleY2(d);
-            })
-        );
-
-      const highA = dataA[dataA.length - 1];
-      const highB = dataB[dataB.length - 1];
-
-      // console.log('A', highA, highB, scaleY(highA), scaleY(highB));
-      // console.log('B', highA.toFixed(2), highB.toFixed(2));
-
-      callback(highA, scaleY(highA), highB, scaleY(highB));
-    },
-    immediate === true ? 0 : 1000
-  );
+function doQueryInvestment({
+  initialAmount,
+  investDuration,
+  cycleType,
+  cycleAmount,
+}) {
+  return apiRequest(
+    { url: '/calculators' },
+    {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        initialAmount,
+        duration: investDuration,
+        cycleType,
+        cycleAmount,
+        sessionId: getUserSessionId(),
+      }),
+    }
+  ).then(({ data }) => {
+    if (data.sessionId) {
+      setUserSessionId(data.sessionId);
+    }
+    return data;
+  });
 }

@@ -88,8 +88,6 @@ export const AreaChart = withTooltip(
     tooltipLeft = 0,
     data,
   }) => {
-    if (width < 10) return null;
-
     const classes = useChartStyles();
 
     // bounds
@@ -142,6 +140,8 @@ export const AreaChart = withTooltip(
       },
       [showTooltip, balanceValueScale, dateScale, data]
     );
+
+    if (width < 10) return null;
 
     return (
       <div>

@@ -8,14 +8,20 @@ const useStyle = makeStyles({
   },
 });
 
-export const Layout = ({ children, variant, className, ...rest }) => {
+export const Layout = ({
+  children,
+  variant,
+  className,
+  footer = 'visible',
+  ...rest
+}) => {
   const classes = useStyle({ variant });
 
   return (
     <div {...rest} className={clsx(classes.root, className)}>
       {children}
 
-      <Footer />
+      {footer === 'visible' && <Footer />}
     </div>
   );
 };
