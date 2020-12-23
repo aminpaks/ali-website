@@ -18,6 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Container from '@material-ui/core/Container';
+import Paper from '@material-ui/core/Paper';
 import LoopIcon from '@material-ui/icons/Loop';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { LinearGradient } from '@visx/gradient';
@@ -58,6 +59,7 @@ export {
   TextField,
   InputAdornment,
   Typography,
+  Paper,
   Select,
   MenuItem,
   LoopIcon,

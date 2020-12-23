@@ -1,21 +1,28 @@
 import { useRef, useState } from 'react';
 import {
+  AttachMoneyIcon,
   clsx,
   InputAdornment,
+  LoopIcon,
   makeStyles,
   MenuItem,
   Select,
   TextField,
-  AttachMoneyIcon,
-  LoopIcon,
   useMutation,
 } from '../../dependencies';
-import { Layout, Button, Section, Header, useSize } from '../../UI';
+import {
+  Button,
+  Header,
+  Layout,
+  Section,
+  usePhoneMediaQuery,
+  useSize,
+} from '../../UI';
 import { apiRequest } from '../../fetch';
 import {
+  getPartialUpdate,
   getUserSessionId,
   setUserSessionId,
-  getPartialUpdate,
 } from '../../Utils';
 import { InvestChart } from './InvestChart';
 
@@ -119,6 +126,7 @@ const useStyle = makeStyles(({ breakpoints }) => ({
 
 export const PageInvestCalculator = () => {
   const classes = useStyle();
+  const isIPhone = usePhoneMediaQuery();
 
   const chartContainerRef = useRef();
   const chartContainerSize = useSize({ ref: chartContainerRef });
@@ -135,6 +143,19 @@ export const PageInvestCalculator = () => {
     doQueryInvestment,
     {
       retry: false,
+      onSuccess: () => {
+        if (isIPhone) {
+          const { top } =
+            chartContainerRef.current?.getBoundingClientRect?.() || {};
+          if (top) {
+            window.scrollTo({
+              top,
+              left: 0,
+              behavior: 'smooth',
+            });
+          }
+        }
+      },
     }
   );
 

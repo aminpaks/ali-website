@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { clsx, makeStyles } from '../dependencies';
 
 const getFloat = (float) => {
   switch (float) {
@@ -18,7 +18,9 @@ const useStyle = makeStyles({
   },
 });
 
-export const Image = ({ float, source, name }) => {
+export const Image = ({ float, source, name, className }) => {
   const classes = useStyle({ float });
-  return <img className={classes.root} src={source} alt={name} />;
+  return (
+    <img className={clsx(classes.root, className)} src={source} alt={name} />
+  );
 };

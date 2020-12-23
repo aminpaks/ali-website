@@ -163,7 +163,7 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
       transition:
         '180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height',
     },
-    [iPhoneLandscapeMediaQuery]: {
+    [`@media ${iPhoneLandscapeMediaQuery}`]: {
       '& > nav': {
         top: -30,
         right: -60,

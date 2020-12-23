@@ -105,6 +105,7 @@ export const InvestChart = ({ width, height, data }) => {
         <LinearGradient id="bank-gradient" from={'#c91f17'} to={'#884744'} />
 
         <AnimatedAreaClosed
+          redraw={[width, height]}
           data={data?.edufinaInvest ? null : loadingMockData}
           x={getIndex(loadingScales.scaleX)}
           y={loadingScales.scaleY}
@@ -115,6 +116,7 @@ export const InvestChart = ({ width, height, data }) => {
           curve={curveMonotoneX}
         />
         <AnimatedAreaClosed
+          redraw={[width, height]}
           animateIntro
           data={data?.edufinaInvest ?? null}
           x={getIndex(scaleX)}
@@ -126,6 +128,7 @@ export const InvestChart = ({ width, height, data }) => {
           curve={curveMonotoneX}
         />
         <AnimatedAreaClosed
+          redraw={[width, height]}
           data={data?.bankInvest ?? null}
           x={getIndex(scaleX)}
           y={scaleY}
@@ -175,6 +178,7 @@ function AnimatedAreaClosed({
   y1,
   y0,
   yScale,
+  redraw = [],
   defined = alwaysTrue,
   curve,
   introTransitionGetter = defaultIntroTransition,
@@ -185,13 +189,18 @@ function AnimatedAreaClosed({
 }) {
   const elRef = useRef();
   const outroFnRef = useRef();
+  const redrawRef = useRef();
 
   useEffect(() => {
+    const isRedraw = data && redrawRef.current === data;
     const hasOutro = typeof outroFnRef.current === 'function';
-    if (hasOutro) {
-      outroFnRef.current(() => {
-        outroFnRef.current = undefined;
-      });
+    if (!isRedraw) {
+      redrawRef.current = data;
+      if (hasOutro) {
+        outroFnRef.current(() => {
+          outroFnRef.current = undefined;
+        });
+      }
     }
     if (data) {
       const path = d3
@@ -204,6 +213,9 @@ function AnimatedAreaClosed({
 
       const d3select = d3.select(elRef.current);
 
+      const redraw = () => {
+        d3select.attr('d', path);
+      };
       const reset = () => {
         const min = d3.min(yScale.domain());
         const resetData = Array(data.length).fill(min);
@@ -227,17 +239,26 @@ function AnimatedAreaClosed({
           .on('end', fn);
       };
 
-      const tid = window.setTimeout(
-        () => {
-          reset();
-          intro();
-        },
-        hasOutro ? outroTransitionDuration : 0
-      );
-      return () => window.clearTimeout(tid);
+      if (isRedraw) {
+        redraw();
+        console.log('sync redraw');
+      } else {
+        const tid = window.setTimeout(
+          () => {
+            if (isRedraw) {
+              redraw();
+            } else {
+              reset();
+              intro();
+            }
+          },
+          hasOutro ? outroTransitionDuration : 0
+        );
+        return () => window.clearTimeout(tid);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, ...redraw]);
 
   return <path {...restProps} ref={elRef} />;
 }

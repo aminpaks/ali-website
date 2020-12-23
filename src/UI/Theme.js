@@ -46,6 +46,7 @@ const theme = createMuiTheme({
           cursor: 'default',
         },
         body: {
+          '--color--accent-main': '#ce021f',
           backgroundColor: '#f5f5f5',
         },
         b: {
