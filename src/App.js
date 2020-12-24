@@ -11,7 +11,7 @@ import {
   PageInvestCalculator,
   PageMortgageCalculator,
 } from './Pages';
-import { Location, Nav, Theme } from './UI';
+import { Location, Nav, Theme, useWindowBounds } from './UI';
 
 const queryClient = new QueryClient();
 
@@ -29,6 +29,7 @@ export const useUpdateState = () => {
 
 function App() {
   const [state, updateState] = useState({ value: 'check' });
+  const { width, height } = useWindowBounds();
 
   return (
     <StateUpdaterContext.Provider value={updateState}>
@@ -36,7 +37,12 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <Router>
             <Theme>
-              <div className="App">
+              <div
+                style={{
+                  '--windowWidth': `${width}px`,
+                  '--windowHeight': `${height}px`,
+                }}
+              >
                 <Nav />
                 <Location />
                 <Switch>

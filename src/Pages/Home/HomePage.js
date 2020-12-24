@@ -15,7 +15,8 @@ const getPublicImage = (imageUrl) => process.env.PUBLIC_URL + imageUrl;
 const useStyles = makeStyles({
   scrollable: {
     width: '100vw',
-    height: '100vh',
+    height: 'var(--windowHeight)',
+    boxSizing: 'border-box',
     overflowY: 'scroll',
     scrollSnapType: 'y mandatory',
   },
@@ -97,9 +98,7 @@ export const PageHome = () => {
   const classes = useStyles({ spacing, breakpoints, mdDown: matches });
 
   const scrollableRef = useRef();
-  // const scrollableEl = scrollableRef.current;
   const contentsRef = useRef();
-  // const contentsEl = contentsRef.current;
 
   useEffect(() => {
     (function ($) {

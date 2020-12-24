@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-  forwardRef,
-} from 'react';
+import React, { useCallback, useRef, useState, forwardRef } from 'react';
 import {
   clsx,
   Link,
@@ -14,6 +8,7 @@ import {
 } from '../dependencies';
 import { useOutsideClick } from '../Utils';
 import { iPhoneLandscapeMediaQuery } from './mediaQueries';
+import { useWindowResize } from './WindowResize';
 
 const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
   navButton: {
@@ -184,7 +179,9 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
         top: 0,
         right: 0,
         width: '100vw',
-        height: '100vh',
+        height: 'var(--windowHeight)',
+        borderRadius: 0,
+        borderColor: 'rgba(0,0,0,0)',
       },
     },
     '& a': {
@@ -273,12 +270,12 @@ export const Nav = () => {
     [setOpen]
   );
 
-  useLayoutEffect(() => {
+  useWindowResize(() => {
     const placeholder = placeholderRef.current;
     if (placeholder != null) {
       setClient(placeholder.getBoundingClientRect());
     }
-  }, []);
+  }, true);
 
   useOutsideClick(navRef, handleMenuClose);
 

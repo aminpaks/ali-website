@@ -1,4 +1,5 @@
 import { clsx, makeStyles } from '../dependencies';
+import { useWindowBounds } from './WindowResize';
 import { Footer } from './Footer';
 
 const useStyle = makeStyles({
@@ -7,7 +8,7 @@ const useStyle = makeStyles({
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingTop: 120,
-    minHeight: '100vh',
+    minHeight: `var(--height)`,
   },
 });
 
@@ -19,9 +20,17 @@ export const Layout = ({
   ...rest
 }) => {
   const classes = useStyle({ variant });
+  const bounds = useWindowBounds();
 
   return (
-    <div {...rest} className={clsx(classes.layoutContainer, className)}>
+    <div
+      {...rest}
+      style={{
+        '--width': `${bounds.width}px`,
+        '--height': `${bounds.height}px`,
+      }}
+      className={clsx(classes.layoutContainer, className)}
+    >
       {children}
 
       {footer === 'visible' && <Footer />}
