@@ -20,6 +20,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import LoopIcon from '@material-ui/icons/Loop';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { LinearGradient } from '@visx/gradient';
 import { AreaClosed, Line, Bar } from '@visx/shape';
@@ -62,6 +63,7 @@ export {
   Paper,
   Select,
   MenuItem,
+  SvgIcon,
   LoopIcon,
   AttachMoneyIcon,
   /* Google ReCAPTHA */

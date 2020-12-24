@@ -31,7 +31,7 @@ export default function Example({
     [values]
   );
   const classes = useChartStyle();
-  const getBrowserColor = useMemo(
+  const getPartColor = useMemo(
     () =>
       scaleOrdinal({
         domain: values.map((v) => v.label),
@@ -69,7 +69,7 @@ export default function Example({
               {...pie}
               animate={animate}
               getKey={(arc) => arc.data.label}
-              getColor={(arc) => getBrowserColor(arc.data.label)}
+              getColor={(arc) => getPartColor(arc.data.label)}
             />
           )}
         </Pie>
@@ -145,12 +145,14 @@ function AnimatedPie({ animate, arcs, path, getKey, getColor }) {
               fill={getColor(arc)}
             />
             {hasSpaceForLabel && (
-              <animated.g style={{ opacity: props.opacity }}>
+              <animated.g
+                style={{ opacity: props.opacity, fontSize: '0.8rem' }}
+              >
                 <text
                   fill="black"
                   x={centroidX}
                   y={centroidY}
-                  dy=".33em"
+                  dy="1.2em"
                   textAnchor="middle"
                   pointerEvents="none"
                 >

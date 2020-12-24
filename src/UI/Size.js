@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const initialState = {
   isReady: false,
@@ -6,7 +6,7 @@ const initialState = {
   height: 0,
 };
 
-export const useSize = ({ ref }) => {
+export const useSize = ({ ref }, dependencies) => {
   const toId = useRef();
   const [state, setState] = useState(initialState);
 
@@ -36,15 +36,17 @@ export const useSize = ({ ref }) => {
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
     };
   });
   useEffect(() => {
     handleResize(true);
     // eslint-disable-next-line
-  }, []);
+  }, dependencies);
 
   return state;
 };

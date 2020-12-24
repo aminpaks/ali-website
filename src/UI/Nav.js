@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useRef,
-  useState,
-  forwardRef,
-  useEffect,
-} from 'react';
+import React, { useCallback, useRef, useState, forwardRef } from 'react';
 import {
   clsx,
   Link,

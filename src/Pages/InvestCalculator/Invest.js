@@ -229,7 +229,7 @@ export const PageInvestCalculator = () => {
                   disabled={isLoading}
                   endIcon={isLoading && <LoopIcon />}
                 >
-                  Show me results
+                  Calculate
                 </Button>
               </div>
             </div>

@@ -1,10 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import spacetime from 'spacetime';
-import { makeStyles, TextField, useMediaQuery } from '@material-ui/core';
+import {
+  InputAdornment,
+  makeStyles,
+  TextField,
+  useMediaQuery,
+  SvgIcon,
+} from '../../dependencies';
 import clsx from 'clsx';
 import { Layout, Button, useSize, Section, Header } from '../../UI';
 import PieChart from './PaymentPie';
 import { AreaChart } from './AreaChart';
+import { AttachMoneyIcon } from '../../dependencies';
 
 const useStyle = makeStyles({
   container: {
@@ -39,10 +46,10 @@ const useStyle = makeStyles({
     verticalAlign: 'baseline',
   },
   inputPurchaseValue: {
-    width: 180,
+    width: 200,
   },
   inputDownPaymentValue: {
-    width: 180,
+    width: 200,
   },
   inputInterestRateValue: {
     width: 100,
@@ -56,10 +63,6 @@ const useStyle = makeStyles({
 
   buttonCalculate: {
     fontSize: '1.8rem',
-  },
-
-  layout: {
-    display: 'block',
   },
 
   col: {
@@ -206,27 +209,54 @@ export const PageMortgageCalculator = () => {
   const classes = useStyle();
   const chartContainerRef = useRef();
   const pieChartContainerRef = useRef();
-  const containerSize = useSize({ ref: chartContainerRef });
-  const pieContainerSize = useSize({ ref: pieChartContainerRef });
+  const isChartDataAvailable = Boolean(chartData);
+  const isPaymentDataAvailable = Boolean(paymentData);
+  const containerSize = useSize({ ref: chartContainerRef }, [
+    isChartDataAvailable,
+  ]);
+  const pieContainerSize = useSize({ ref: pieChartContainerRef }, [
+    isPaymentDataAvailable,
+  ]);
+
+  useLayoutEffect(() => {
+    if (isTooSmall && isChartDataAvailable) {
+      const { top } =
+        chartContainerRef.current?.getBoundingClientRect?.() || {};
+      if (top) {
+        window.scrollTo({
+          top: top - 300,
+          left: 0,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [isChartDataAvailable, isTooSmall]);
 
   return (
-    <Layout variant="fill" className={classes.layout}>
+    <Layout className={classes.layout}>
       <Section>
         <Header>Mortgage calculator</Header>
         <Section.Part>
           <div className={clsx(classes.col, classes.colLeft)}>
             <div className={classes.lineContainer}>
               <div>
-                I want to buy a home valued at ${' '}
+                I want to buy a home valued at{' '}
                 <TextField
                   className={clsx(classes.inputs, classes.inputPurchaseValue)}
                   type="number"
                   value={purchaseValue}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoneyIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                   onChange={handlePartialUpdate('purchaseValue')}
                 />
               </div>
               <div>
-                with a down payment of ${' '}
+                with a down payment of{' '}
                 <TextField
                   className={clsx(
                     classes.inputs,
@@ -234,11 +264,18 @@ export const PageMortgageCalculator = () => {
                   )}
                   type="number"
                   value={downPaymentValue}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoneyIcon />
+                      </InputAdornment>
+                    ),
+                  }}
                   onChange={handlePartialUpdate('downPaymentValue')}
                 />
               </div>
               <div>
-                with an interest rate of %{' '}
+                with an interest rate of{' '}
                 <TextField
                   className={clsx(
                     classes.inputs,
@@ -246,6 +283,18 @@ export const PageMortgageCalculator = () => {
                   )}
                   type="number"
                   value={interestRateValue}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SvgIcon viewBox="-300 -300 1400 1400">
+                          <path
+                            xmlns="http://www.w3.org/2000/svg"
+                            d="M102.9,947.8c-13,0-25.9-5-35.8-14.9c-19.8-19.8-19.8-51.9,0-71.7L861.2,67.1c19.8-19.8,51.9-19.8,71.7,0c19.8,19.8,19.8,51.9,0,71.7L138.8,932.9C128.9,942.8,115.9,947.8,102.9,947.8z M990,753.4c0-130.4-106.1-236.5-236.6-236.5C623,516.9,516.9,623,516.9,753.4S623,990,753.4,990C883.9,990,990,883.9,990,753.4z M888.6,753.4c0,74.5-60.6,135.2-135.2,135.2c-74.5,0-135.2-60.6-135.2-135.2c0-74.5,60.6-135.2,135.2-135.2C828,618.3,888.6,678.9,888.6,753.4z M483.1,246.6C483.1,116.1,377,10,246.6,10C116.1,10,10,116.1,10,246.6C10,377,116.1,483.1,246.6,483.1C377,483.1,483.1,377,483.1,246.6z M381.7,246.6c0,74.5-60.6,135.2-135.2,135.2c-74.5,0-135.2-60.6-135.2-135.2c0-74.5,60.6-135.2,135.2-135.2C321.1,111.4,381.7,172,381.7,246.6z"
+                          />
+                        </SvgIcon>
+                      </InputAdornment>
+                    ),
+                  }}
                   onChange={handlePartialUpdate('interestRateValue')}
                 />{' '}
                 for{' '}
@@ -264,7 +313,6 @@ export const PageMortgageCalculator = () => {
                 <Button
                   className={classes.buttonCalculate}
                   onClick={handleCalculate}
-                  size="large"
                 >
                   Estimate
                 </Button>
@@ -274,29 +322,33 @@ export const PageMortgageCalculator = () => {
           <div
             className={clsx(classes.colRight, { 'is-not-small': !isTooSmall })}
           >
-            <div>
-              <div ref={pieChartContainerRef}>
-                {pieContainerSize.isReady && paymentData && (
-                  <PieChart
-                    width={pieContainerSize.width}
-                    height={pieContainerSize.height}
-                    data={paymentData}
-                  />
-                )}
+            {paymentData && (
+              <div>
+                <div ref={pieChartContainerRef}>
+                  {pieContainerSize.isReady && (
+                    <PieChart
+                      width={pieContainerSize.width}
+                      height={pieContainerSize.height - 40}
+                      data={paymentData}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-            <div>
-              <div ref={chartContainerRef}>
-                {containerSize.isReady && chartData && (
-                  <AreaChart
-                    width={containerSize.width}
-                    height={containerSize.height}
-                    margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
-                    data={chartData}
-                  />
-                )}
+            )}
+            {chartData && (
+              <div>
+                <div ref={chartContainerRef}>
+                  {containerSize.isReady && (
+                    <AreaChart
+                      width={containerSize.width}
+                      height={containerSize.height}
+                      margin={{ top: 0, left: 60, right: 0, bottom: 60 }}
+                      data={chartData}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </Section.Part>
       </Section>
