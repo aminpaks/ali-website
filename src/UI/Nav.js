@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useState, forwardRef } from 'react';
+import React, {
+  useCallback,
+  useRef,
+  useState,
+  forwardRef,
+  useEffect,
+} from 'react';
 import {
   clsx,
   Link,
@@ -159,19 +165,30 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
         '180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height',
     },
     [`@media ${iPhoneLandscapeMediaQuery}`]: {
+      '& .real-links-container span': {
+        display: 'block',
+      },
+      '&,& > nav': {
+        transition: 'none !important',
+      },
       '& > nav': {
         top: -30,
         right: -60,
         position: 'fixed',
-        padding: 40,
+        padding: 35,
         paddingTop: 70,
         boxSizing: 'border-box',
-        '& > span': {
+        '& .real-links-container': {
+          width: '100%',
           height: '100%',
+          position: 'relative',
           overflow: 'scroll',
+          boxSizing: 'border-box',
           '& > span': {
-            display: 'block',
-            paddingRight: 20,
+            '& > a': {
+              textAlign: 'center',
+            },
+            // paddingRight: 10,
           },
         },
       },
@@ -233,6 +250,9 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
     position: 'absolute',
     visibility: 'hidden',
     zIndex: -1,
+    [`@media ${iPhoneLandscapeMediaQuery}`]: {
+      display: 'none !important',
+    },
   },
   navLink: {
     color: 'inherit',
@@ -245,6 +265,7 @@ export const Nav = () => {
   const navRef = useRef();
   const navLinkRef = useRef();
   const placeholderRef = useRef();
+  const navContainerRef = useRef();
   const [open, setOpen] = useState(false);
   const [client, setClient] = useState({ width: 0, height: 0 });
   const classes = useStyle({
@@ -289,11 +310,12 @@ export const Nav = () => {
             </h1>
           </Link>
           <div
-            className={clsx(classes.navContainer, { 'is-open': open })}
+            ref={navContainerRef}
             style={{
               '--expandedWidth': client.width + 'px',
               '--expandedHeight': client.height + 'px',
             }}
+            className={clsx(classes.navContainer, { 'is-open': open })}
           >
             <NavButton
               ref={navLinkRef}

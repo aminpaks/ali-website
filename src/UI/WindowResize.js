@@ -16,7 +16,6 @@ export const useWindowBounds = () => {
       const { width, height } = getWindowBounds();
       const { width: currentWidth, height: currentHeight } = boundsRef.current;
       if (currentWidth !== width || currentHeight !== height) {
-        console.log('change of window size', width, height);
         setBounds({ width, height });
       }
     }, 400);

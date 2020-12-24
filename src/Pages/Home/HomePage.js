@@ -1,18 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import jQuery from 'jquery';
-import { Button, LayoutHome } from '../../UI';
+import { clsx, makeStyles, Link } from '../../dependencies';
 import {
-  clsx,
-  useMediaQuery,
-  useTheme,
-  makeStyles,
-  Link,
-} from '../../dependencies';
+  Button,
+  iPhonePortraitMediaQuery,
+  iPhoneLandscapeMediaQuery,
+  LayoutHome,
+} from '../../UI';
+import { getPublicImage } from '../../Utils';
 
 const getBackground = (image) => ({ backgroundImage: `url(${image}` });
-const getPublicImage = (imageUrl) => process.env.PUBLIC_URL + imageUrl;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ breakpoints }) => ({
   scrollable: {
     width: '100vw',
     height: 'var(--windowHeight)',
@@ -22,11 +21,11 @@ const useStyles = makeStyles({
   },
   section: {
     width: '100%',
-    height: '100%',
+    height: 'var(--windowHeight)',
     scrollSnapAlign: 'start',
     '& > div': {
       width: '100%',
-      height: '100%',
+      height: 'var(--windowHeight)',
       backgroundPosition: 'top center',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
@@ -35,6 +34,48 @@ const useStyles = makeStyles({
       opacity: 0,
       width: 1,
       height: 1,
+    },
+    [`@media ${iPhonePortraitMediaQuery}`]: {
+      '& > div': {
+        '--beforeTopColor': 'rgba(255,255,255,0)',
+        '--beforeBottomColor': 'rgba(255,255,255,0)',
+        '--afterTopColor': 'rgba(255,255,255,0)',
+        '--afterBottomColor': 'rgba(255,255,255,0)',
+        position: 'relative',
+        '&::before,&::after': {
+          width: '100%',
+          content: '""',
+          display: 'block',
+          position: 'absolute',
+        },
+        '&::before': {
+          top: 0,
+          height: '40vh',
+          backgroundImage:
+            'linear-gradient(0deg, var(--beforeBottomColor) 0%, var(--beforeTopColor) 40%)',
+        },
+        '&::after': {
+          bottom: 0,
+          height: '25vh',
+          backgroundImage:
+            'linear-gradient(0deg, var(--afterBottomColor) 0%, var(--afterTopColor) 70%)',
+        },
+      },
+      '&:nth-child(1) > div': {
+        '--beforeTopColor': 'rgba(255,255,255,1)',
+        '--beforeBottomColor': 'rgba(255,255,255,0)',
+        '--afterTopColor': 'rgba(255,255,255,0)',
+        '--afterBottomColor': 'rgba(255,255,255,1)',
+        backgroundSize: '250vw',
+        backgroundPosition: 'center 75%',
+      },
+      '&:nth-child(3) > div': {
+        '--beforeTopColor': 'rgba(230,230,230,1)',
+        '--beforeBottomColor': 'rgba(230,230,230,0)',
+        '--afterTopColor': 'rgba(230,230,230,0)',
+        '--afterBottomColor': 'rgba(230,230,230,1)',
+        backgroundPosition: 'center 60px',
+      },
     },
   },
   contents: {
@@ -50,10 +91,8 @@ const useStyles = makeStyles({
     pointerEvents: 'none',
   },
   contentsContainer: {
-    width: ({ mdDown }) => (mdDown ? '100vw' : undefined),
-    top: ({ mdDown }) => (mdDown ? 60 : 100),
+    top: 100,
     left: '50%',
-    transform: ({ mdDown }) => (mdDown ? undefined : 'translateX(-50%)'),
     opacity: 0,
 
     color: '#2d2d2d',
@@ -63,6 +102,25 @@ const useStyles = makeStyles({
     textAlign: 'center',
 
     userSelect: 'none',
+    [breakpoints.down('md')]: {
+      top: 60,
+      width: '100vw',
+      transform: 'translateX(-50%)',
+    },
+    [`@media ${iPhoneLandscapeMediaQuery}`]: {
+      // position: 'relative',
+      '&::before': {
+        top: 0,
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        content: '""',
+        position: 'absolute',
+        backgroundImage:
+          'linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 45%, rgba(255, 255, 255, 1) 55%, rgba(255, 255, 255, 0) 100%)',
+        zIndex: -1,
+      },
+    },
   },
   contentsBottom: {
     bottom: 0,
@@ -70,32 +128,38 @@ const useStyles = makeStyles({
     width: '100%',
     position: 'fixed',
     cursor: 'default',
+    [`@media ${iPhoneLandscapeMediaQuery}`]: {
+      top: '75vh',
+      bottom: 'initial',
+    },
   },
   contentsBottomContainer: {
     left: '50%',
-    bottom: ({ mdDown }) => (mdDown ? 60 : 100),
+    bottom: 100,
     transform: 'translateX(-50%)',
     opacity: 0,
-    padding: '0 2em',
-    width: '100%',
-
-    color: 'white',
-    // textShadow: '0px 0px 15px black',
-
     position: 'absolute',
     textAlign: 'center',
-  },
-  buttonGroup: {
-    '& > *': {
-      margin: ({ spacing }) => spacing(1),
+    [breakpoints.down('md')]: {
+      bottom: 30,
     },
   },
-});
+  buttonGroup: {
+    [`@media ${iPhonePortraitMediaQuery}`]: {
+      '& > *:first-of-type': {
+        marginBottom: '0.8rem',
+      },
+    },
+    [`@media ${iPhoneLandscapeMediaQuery}`]: {
+      '& > *:first-of-type': {
+        marginBottom: '0.8rem',
+      },
+    },
+  },
+}));
 
 export const PageHome = () => {
-  const { breakpoints, spacing } = useTheme();
-  const matches = useMediaQuery(breakpoints.down('md'));
-  const classes = useStyles({ spacing, breakpoints, mdDown: matches });
+  const classes = useStyles();
 
   const scrollableRef = useRef();
   const contentsRef = useRef();
@@ -173,21 +237,33 @@ export const PageHome = () => {
         </div>
       </div>
       <div ref={contentsRef} className={classes.contents}>
-        <div className={clsx('abs-text', classes.contentsContainer)}>
+        <div
+          className={clsx('abs-text', classes.contentsContainer, {
+            'is-small-screen': true,
+          })}
+        >
           <div className="text">
             <div>
               <h2>Financial Literacy Course</h2>
             </div>
           </div>
         </div>
-        <div className={clsx('abs-text', classes.contentsContainer)}>
+        <div
+          className={clsx('abs-text', classes.contentsContainer, {
+            'is-small-screen': true,
+          })}
+        >
           <div className="text">
             <div>
               <h2>Free Resources</h2>
             </div>
           </div>
         </div>
-        <div className={clsx('abs-text', classes.contentsContainer)}>
+        <div
+          className={clsx('abs-text', classes.contentsContainer, {
+            'is-small-screen': true,
+          })}
+        >
           <div className="text">
             <div>
               <h2>Schedule a Consultation</h2>
