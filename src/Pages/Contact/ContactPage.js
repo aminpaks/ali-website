@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   makeStyles,
   useMutation,
@@ -6,6 +6,7 @@ import {
   LoopIcon,
   ReCAPTCHA,
   Typography,
+  useLocation,
 } from '../../dependencies';
 import { apiRequest } from '../../fetch';
 import { Button, Header, Layout, Section } from '../../UI';
@@ -57,6 +58,8 @@ const postContact = ({ fullname, email, phone, notes }) =>
 export const PageContact = () => {
   const classes = useStyle();
 
+  const location = useLocation();
+
   const [formFields, setFormFields] = useState({});
   const handleFormFieldUpdate = useCallback(
     ({ target }) =>
@@ -88,6 +91,19 @@ export const PageContact = () => {
     errors.indexOf('notes') > 0
       ? `Provide at least 20 characters what you would like to know`
       : undefined;
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const from = params.has('from') ? params.get('from').toLowerCase() : '';
+    if (from === 'courses' && !formFields.notes) {
+      handleFormFieldUpdate({
+        target: {
+          name: 'notes',
+          value: `I would like to buy your course.\nHere is how I would like to pay...`,
+        },
+      });
+    }
+  }, [location.search, handleFormFieldUpdate, formFields.notes]);
 
   return (
     <Layout>

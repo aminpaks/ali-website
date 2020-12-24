@@ -2,7 +2,7 @@ import { Paper, makeStyles } from '../dependencies';
 
 const useStyles = makeStyles(({ spacing }) => ({
   container: {
-    padding: spacing(2),
+    padding: spacing(4),
   },
 }));
 

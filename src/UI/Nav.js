@@ -141,6 +141,7 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
       backgroundColor: 'transparent',
       borderColor: 'rgba(0,0,0,0)',
       boxShadow: '0 0 0px rgba(0,0,0,0)',
+      visibility: 'hidden',
       transition:
         '180ms ease-in-out all, 160ms 140ms ease-out width, 200ms ease-in height',
       '& > span': {
@@ -155,6 +156,7 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
       backgroundColor: '#fff',
       borderColor: 'rgba(0,0,0,0.16)',
       boxShadow: '0 0 8px rgba(0,0,0,0.1)',
+      visibility: 'visible',
       transition:
         '180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height',
     },
@@ -322,8 +324,8 @@ export const Nav = () => {
                   <Link to="/">
                     <span>Home</span>
                   </Link>
-                  <Link to="/checkout">
-                    <span>Checkout</span>
+                  <Link to="/courses">
+                    <span>Courses</span>
                   </Link>
                   <Link to="/investment-calculator">
                     <span>Investment calculator</span>
@@ -344,7 +346,7 @@ export const Nav = () => {
               </span>
               <span ref={placeholderRef} className={classes.navPlaceholder}>
                 <Link to="/">Home</Link>
-                <Link to="/">Checkout</Link>
+                <Link to="/">Courses</Link>
                 <Link to="/">Investment calculator</Link>
                 <Link to="/">Mortgage calculator</Link>
                 <Link to="/">Articles</Link>

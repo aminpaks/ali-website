@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import {
   PageAboutUs,
   PageArticles,
-  PageCheckout,
+  PageCourses,
   PageContact,
   PageHome,
   PageInvestCalculator,
@@ -55,8 +55,8 @@ function App() {
                   <Route path="/investment-calculator">
                     <PageInvestCalculator />
                   </Route>
-                  <Route path="/checkout">
-                    <PageCheckout />
+                  <Route path="/courses">
+                    <PageCourses />
                   </Route>
                   <Route path="/about-us">
                     <PageAboutUs />

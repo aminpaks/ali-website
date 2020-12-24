@@ -7,13 +7,13 @@ const useStyles = makeStyles({
   },
 });
 
-export const Button = ({ children, ...rest }) => {
+export const Button = ({ children, ...restProps }) => {
   const classes = useStyles();
   return (
     <MuiButton
-      {...rest}
+      {...restProps}
       classes={classes}
-      variant="contained"
+      variant={restProps.variant ?? 'contained'}
       disableElevation
       size="large"
     >
