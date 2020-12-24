@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Header, Layout, Section } from '../../UI';
 import { Link, makeStyles } from '../../dependencies';
 import { COURSE_PRICE, VISA_API_KEY, VISA_SDK_URL } from '../../constants';
+import { getPublicImage, storageGet, storageSet } from '../../Utils';
+import { DisplayError } from '../../UI/DisplayError';
+
+const COURSES_PAYMENT = 'coursesPayment';
 
 const useStyles = makeStyles({
   cardContainer: {
@@ -38,27 +42,32 @@ const isVisaSdkAvailable = () => window.VisaCheckoutSDK != null;
 
 export const PageCourses = () => {
   const classes = useStyles();
+  const [{ data: payment = {}, error }, setPaymentState] = useState(
+    storageGet(COURSES_PAYMENT, {})
+  );
+  const { callid = false } = payment;
+  const isError = Boolean(error);
 
   useEffect(() => {
     let script = null;
-    if (isVisaSdkAvailable() === false) {
+    if (callid === false && isVisaSdkAvailable() === false) {
       window.onVisaCheckoutReady = () => {
-        console.log('check VISA');
         window.V.init({
           apikey: VISA_API_KEY,
           paymentRequest: {
             currencyCode: 'CAD',
-            subtotal: '10.00',
+            subtotal: COURSE_PRICE,
+          },
+          settings: {
+            logoUrl: getPublicImage('/edufina-logo.png'),
           },
         });
         window.V.on('payment.success', (payment) => {
-          console.log(payment);
+          const { vInitRequest, ...data } = payment;
+          setPaymentState(storageSet(COURSES_PAYMENT, { data }));
         });
-        window.V.on('payment.cancel', (payment) => {
-          console.log(payment);
-        });
-        window.V.on('payment.error', (payment, error) => {
-          console.log(error, payment);
+        window.V.on('payment.error', (_, error) => {
+          setPaymentState({ error });
         });
       };
 
@@ -69,7 +78,7 @@ export const PageCourses = () => {
         document.body.removeChild(script);
       }
     };
-  }, []);
+  }, [callid]);
 
   return (
     <Layout>
@@ -98,36 +107,53 @@ export const PageCourses = () => {
               </p>
             </div>
             <div>
-              <div>
-                <p>
-                  The course costs <strong>{COURSE_PRICE} CAD</strong> and you
-                  can buy it online via Visa Checkout which is secured and safe,
-                  just click on the Visa icon below and process your payment
-                </p>
-                <p>
-                  <img
-                    alt="Visa Checkout"
-                    className="v-button"
-                    role="button"
-                    src="https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png"
-                  />
-                </p>
-              </div>
-              <div>
-                <p>
-                  or reach out to us, we are open to receive the payment by all
-                  means.
-                </p>
-                <p>
-                  <Button
-                    to="/contact?from=courses"
-                    component={Link}
-                    size="small"
-                  >
-                    Contact us
-                  </Button>
-                </p>
-              </div>
+              {callid !== false && !isError ? (
+                <section>
+                  <h4>Payment processed successfully!</h4>
+                  <article>
+                    Here is your reference ID: <strong>{callid}</strong>
+                  </article>
+                </section>
+              ) : (
+                <section>
+                  <p>
+                    The course costs <strong>{COURSE_PRICE} CAD</strong> and you
+                    can buy it online via Visa Checkout which is secured and
+                    safe, just click on the Visa icon below and process your
+                    payment
+                  </p>
+                  <article>
+                    {isError && <DisplayError failure={error} />}
+                    {callid === false && isError === false && (
+                      <p>
+                        <img
+                          alt="Visa Checkout"
+                          className="v-button"
+                          role="button"
+                          src="https://sandbox.secure.checkout.visa.com/wallet-services-web/xo/button.png"
+                        />
+                      </p>
+                    )}
+                  </article>
+                </section>
+              )}
+              {callid === false && (
+                <div>
+                  <p>
+                    or reach out to us, we are open to receive the payment by
+                    all means.
+                  </p>
+                  <div>
+                    <Button
+                      to="/contact?from=courses"
+                      component={Link}
+                      size="small"
+                    >
+                      Contact us
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </Section.Part>

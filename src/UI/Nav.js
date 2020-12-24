@@ -36,6 +36,7 @@ const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
       '& > span': {
         top: 8,
         backgroundColor: '#000',
+        transition: '800ms 200ms ease',
         '&::before': {
           top: -5,
           transform: 'rotate(0deg)',
@@ -51,8 +52,10 @@ const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
           display: 'block',
           backgroundColor: '#000',
           position: 'absolute',
-          transition: '200ms ease-out',
           transformOrigin: '50% 50%',
+        },
+        '&::before,&::after': {
+          transition: '200ms ease-out',
         },
       },
     },
@@ -67,6 +70,7 @@ const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
       },
       '& > span': {
         '& > span': {
+          transition: 'none',
           backgroundColor: 'transparent',
           '&::before': {
             top: 0,
