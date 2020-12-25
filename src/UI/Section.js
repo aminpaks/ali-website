@@ -56,11 +56,11 @@ const usePartStyle = makeStyles(({ breakpoints, palette }) => ({
       },
     },
   },
-  // container: {
-  //   [breakpoints.up('md')]: {
-  //     display: ({ type }) => (type === 'column' ? 'flex' : undefined),
-  //   },
-  // },
+  container: {
+    [breakpoints.up('md')]: {
+      display: ({ type }) => (type === 'column' ? 'flex' : undefined),
+    },
+  },
 }));
 
 const useColumnStyle = makeStyles(({ breakpoints }) => ({
@@ -83,8 +83,9 @@ const Part = ({
   children,
   bgColor = 'primary',
   variant = 'simple',
+  type = 'none',
 }) => {
-  const classes = usePartStyle({ bgColor, type: undefined });
+  const classes = usePartStyle({ bgColor, type });
 
   return (
     <article

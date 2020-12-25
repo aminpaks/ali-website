@@ -5,7 +5,7 @@ import { Image } from './Image';
 const useStyles = makeStyles({
   container: {
     color: '#888',
-    marginTop: '2rem',
+    marginTop: '3rem',
     marginBottom: '3rem',
   },
   innerContainer: {
@@ -13,6 +13,8 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderTop: '1px solid #ddd',
+    paddingTop: '2rem',
   },
   logo: {
     width: 120,

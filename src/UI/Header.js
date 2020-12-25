@@ -13,7 +13,7 @@ const useStyle = makeStyles(({ palette }) => ({
       position: 'relative',
       '&::before': {
         top: '10%',
-        width: 10,
+        width: 4,
         height: '78%',
         display: 'block',
         content: '""',
@@ -22,7 +22,7 @@ const useStyle = makeStyles(({ palette }) => ({
       },
       '& > *': {
         fontSize,
-        marginLeft: 20,
+        marginLeft: 26,
       },
     },
   },

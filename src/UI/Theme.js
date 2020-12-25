@@ -20,7 +20,12 @@ const theme = createMuiTheme({
       contrastText: '#000',
     },
     accent: {
-      main: '#ce021f',
+      main: '#005DAA',
+      contrastText: '#fff',
+    },
+    accent2: {
+      main: '#FFD200',
+      contrastText: '#000',
     },
   },
   overrides: {
@@ -46,7 +51,8 @@ const theme = createMuiTheme({
           cursor: 'default',
         },
         body: {
-          '--color--accent-main': '#ce021f',
+          '--color--accent-main': '#005DAA',
+          '--color--accent-dark': '#a41034',
           backgroundColor: '#f5f5f5',
         },
         b: {
@@ -60,7 +66,26 @@ const theme = createMuiTheme({
         },
 
         '.color--accent-main': {
-          color: '#ce021f',
+          color: '#005DAA',
+        },
+        '.color--accent-dark': {
+          color: '#a41034',
+        },
+
+        '.margin-top--extra-small': {
+          marginTop: '0.2rem',
+        },
+        '.margin-top--small': {
+          marginTop: '0.8rem',
+        },
+        '.margin-top--medium': {
+          marginTop: '1rem',
+        },
+        '.margin-top--large': {
+          marginTop: '2rem',
+        },
+        '.margin-top--extra-large': {
+          marginTop: '6rem',
         },
       },
     },

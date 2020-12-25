@@ -1,13 +1,13 @@
 import { clsx, makeStyles } from '../../dependencies';
-import { Section, useDesktopQuery } from '../../UI';
+import { TitleLine, Section, useDesktopQuery } from '../../UI';
 import { getPublicImage } from '../../Utils';
 
 const useStyles = makeStyles({
   header: {
-    textAlign: 'center',
-    textTransform: 'capitalize',
     '& h3': {
-      fontSize: '2rem',
+      fontSize: '2.4rem',
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
   },
   imgContainer: {
@@ -35,7 +35,7 @@ export const Toolbox = () => {
   return (
     <Section.Part bgColor="accent" component="section">
       <header className={classes.header}>
-        <h3>Tools to succeed</h3>
+        <TitleLine>Tools to Succeed</TitleLine>
       </header>
       <article>
         <div

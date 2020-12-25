@@ -10,4 +10,5 @@ export * from './Nav';
 export * from './Section';
 export * from './Size';
 export * from './Theme';
+export * from './TitleLine';
 export * from './WindowResize';

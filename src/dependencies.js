@@ -19,6 +19,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
 import LoopIcon from '@material-ui/icons/Loop';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
@@ -63,6 +64,7 @@ export {
   Paper,
   Select,
   MenuItem,
+  Card,
   SvgIcon,
   LoopIcon,
   AttachMoneyIcon,

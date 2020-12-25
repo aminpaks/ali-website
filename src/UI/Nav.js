@@ -61,7 +61,7 @@ const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
     },
     '&.is-open': {
       '&:hover > span': {
-        backgroundColor: palette.accent.main,
+        backgroundColor: '#000',
         '& > span': {
           '&::before,&::after': {
             backgroundColor: '#fff',
@@ -120,7 +120,7 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
     margin: 0,
     display: 'block',
     '& span': {
-      color: '#ce021f',
+      color: palette.accent.main,
     },
   },
   navContainer: {
@@ -213,10 +213,10 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
       cursor: 'pointer',
       transition: '180ms ease-in-out, color 100ms ease',
       '&:hover': {
-        color: '#fff',
-        '&::after': {
-          width: '100%',
-        },
+        // color: '#fff',
+        // '&::after': {
+        //   width: '100%',
+        // },
         '& > span': {
           padding: '0 1em',
         },
@@ -231,17 +231,16 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
         transition: 'inherit',
         pointerEvents: 'none',
       },
-      '&::after': {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        width: 0,
-        content: '""',
-        display: 'block',
-        position: 'absolute',
-        backgroundColor: palette.accent.main,
-        transition: 'inherit',
-      },
+      // '&::after': {
+      //   top: 0,
+      //   right: 0,
+      //   bottom: 0,
+      //   width: 0,
+      //   content: '""',
+      //   display: 'block',
+      //   position: 'absolute',
+      //   transition: 'inherit',
+      // },
     },
   },
   navPlaceholder: {
