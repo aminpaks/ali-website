@@ -20,9 +20,10 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     scrollSnapType: 'y mandatory',
   },
   section: {
-    width: '100%',
+    width: '100vw',
     height: 'var(--windowHeight)',
     scrollSnapAlign: 'start',
+    scrollSnapStop: 'always',
     '& > div': {
       width: '100%',
       height: 'var(--windowHeight)',
@@ -84,41 +85,46 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     width: '100vw',
     position: 'fixed',
     cursor: 'default',
+    textAlign: 'center',
+    pointerEvents: 'none',
     '& h2': {
       fontSize: '2rem',
       fontWeight: 'normal',
     },
-    pointerEvents: 'none',
+    '& h2 + span': {
+      display: 'block',
+      marginTop: -18,
+    },
   },
   contentsContainer: {
-    top: 100,
+    top: 60,
     left: '50%',
+    transform: 'translateX(-50%)',
     opacity: 0,
-
     color: '#2d2d2d',
     textShadow: '0px 0px 4px rgba(0,0,0, 0.2)',
-
     position: 'absolute',
-    textAlign: 'center',
-
-    userSelect: 'none',
     [breakpoints.down('md')]: {
       top: 60,
       width: '100vw',
       transform: 'translateX(-50%)',
     },
     [`@media ${iPhoneLandscapeMediaQuery}`]: {
-      // position: 'relative',
       '&::before': {
-        top: 0,
+        top: '50%',
         width: '100%',
         height: '100%',
         display: 'block',
         content: '""',
         position: 'absolute',
+        transform: 'translateY(-50%)',
         backgroundImage:
           'linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 45%, rgba(255, 255, 255, 1) 55%, rgba(255, 255, 255, 0) 100%)',
         zIndex: -1,
+      },
+      '&:nth-child(1)::before': {
+        height: '250%',
+        transform: 'translateY(-40%)',
       },
     },
   },
@@ -129,13 +135,13 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     position: 'fixed',
     cursor: 'default',
     [`@media ${iPhoneLandscapeMediaQuery}`]: {
-      top: '75vh',
+      top: 'calc(var(--windowHeight) - 30px)',
       bottom: 'initial',
     },
   },
   contentsBottomContainer: {
     left: '50%',
-    bottom: 100,
+    bottom: 80,
     transform: 'translateX(-50%)',
     opacity: 0,
     position: 'absolute',
@@ -145,6 +151,9 @@ const useStyles = makeStyles(({ breakpoints }) => ({
     },
   },
   buttonGroup: {
+    '& > *': {
+      margin: '0.8rem',
+    },
     [`@media ${iPhonePortraitMediaQuery}`]: {
       '& > *:first-of-type': {
         marginBottom: '0.8rem',
@@ -245,6 +254,7 @@ export const PageHome = () => {
           <div className="text">
             <div>
               <h2>Financial Literacy Course</h2>
+              <span>Money-back guarantee</span>
             </div>
           </div>
         </div>

@@ -1,14 +1,14 @@
 import clsx from 'clsx';
 import { Container, makeStyles } from '@material-ui/core';
 
-const useSectionStyle = makeStyles(({ breakpoints }) => ({
+const useSectionStyle = makeStyles({
   container: {
     fontSize: '1.2rem',
     '& h1,h2,h3': {
       marginTop: 0,
     },
   },
-}));
+});
 
 const paddingLarge = ({ bgColor }) => {
   return !!bgColor ? '4rem' : undefined;
@@ -33,19 +33,34 @@ const usePartStyle = makeStyles(({ breakpoints, palette }) => ({
         paddingBottom: paddingLarge,
       },
     },
-    color: ({ bgColor }) => (bgColor === 'accent' ? '#fff' : undefined),
-    backgroundColor: ({ bgColor }) =>
-      bgColor === 'accent' ? palette.accent.main : undefined,
     '&.is-compact': {
       paddingTop: '0 !important',
       paddingBottom: '0 !important',
     },
-  },
-  container: {
-    [breakpoints.up('md')]: {
-      display: ({ type }) => (type === 'column' ? 'flex' : undefined),
+    '&.bg-accent-color': {
+      backgroundColor: 'var(--color--accent-main)',
+      '&,& a': {
+        color: '#fff',
+      },
+      '& a': {
+        transition: '180ms ease',
+        '&:hover': {
+          color: 'rgba(255,255,255,0.8)',
+        },
+      },
+      '& .box': {
+        display: 'flex',
+        '& > div': {
+          flex: '1 0 auto',
+        },
+      },
     },
   },
+  // container: {
+  //   [breakpoints.up('md')]: {
+  //     display: ({ type }) => (type === 'column' ? 'flex' : undefined),
+  //   },
+  // },
 }));
 
 const useColumnStyle = makeStyles(({ breakpoints }) => ({
@@ -67,14 +82,15 @@ const Part = ({
   className,
   children,
   bgColor = 'primary',
-  type = 'simple',
+  variant = 'simple',
 }) => {
-  const classes = usePartStyle({ bgColor, type });
+  const classes = usePartStyle({ bgColor, type: undefined });
 
   return (
     <article
       className={clsx(classes.root, className, {
-        'is-compact': type === 'compact',
+        'bg-accent-color': bgColor === 'accent',
+        'is-compact': variant === 'compact',
       })}
     >
       <Container component={component} className={classes.container}>
