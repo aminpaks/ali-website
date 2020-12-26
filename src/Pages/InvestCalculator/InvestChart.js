@@ -25,7 +25,7 @@ const useStyles = makeStyles({
       transition: '1s',
     },
     borderBottom: '2px dotted #000',
-    textShadow: '0 0 4px #fff',
+    textShadow: '1px 1px 14px #fff, -1px -1px 14px #fff',
     pointerEvents: 'none',
     '& span': {
       display: 'block',

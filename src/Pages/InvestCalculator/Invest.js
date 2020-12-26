@@ -59,7 +59,7 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     verticalAlign: 'baseline',
   },
   inputInitialAmount: {
-    width: 140,
+    width: 200,
   },
   inputDuration: {
     width: 120,
@@ -68,7 +68,7 @@ const useStyle = makeStyles(({ breakpoints }) => ({
     },
   },
   inputInvestAmount: {
-    width: 110,
+    width: 180,
   },
 
   '@keyframes rotate': {
