@@ -11,6 +11,7 @@ import {
   PageInvestCalculator,
   PageMortgageCalculator,
 } from './Pages';
+import { PageCheckoutSuccess } from './Pages/Checkout/CheckoutPage';
 import { Location, Nav, Theme, useWindowBounds } from './UI';
 
 const queryClient = new QueryClient();
@@ -46,6 +47,9 @@ function App() {
                 <Nav />
                 <Location />
                 <Switch>
+                  <Route path="/checkout/success">
+                    <PageCheckoutSuccess />
+                  </Route>
                   <Route path="/articles">
                     <PageArticles />
                   </Route>

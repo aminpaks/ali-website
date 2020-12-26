@@ -1,8 +1,17 @@
-import { Header, Layout, Section } from '../../UI';
-import { SvgIcon, makeStyles } from '../../dependencies';
-import { Grid } from '@material-ui/core';
+import { useState } from 'react';
+import { Button, Header, Layout, Section, Image, useStripe } from '../../UI';
+import {
+  SvgIcon,
+  makeStyles,
+  useMutation,
+  LoopIcon,
+  Link,
+  Grid,
+  Hidden,
+} from '../../dependencies';
 import { Course } from './Course';
 import { getPublicImage } from '../../Utils';
+import { apiRequest } from '../../fetch';
 
 const useStyles = makeStyles(({ breakpoints }) => ({
   cardContainer: {
@@ -23,12 +32,6 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   boxContainer: {
     marginBottom: '2rem',
     padding: '4rem 0',
-  },
-  courses: {
-    '& a': {
-      display: 'block',
-      textAlign: 'center',
-    },
   },
   quote: {
     marginLeft: 'auto',
@@ -101,10 +104,51 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       },
     },
   },
+  courseSyllabus: {
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    maxWidth: '24%',
+    '& img': {
+      maxWidth: '100%',
+    },
+  },
 }));
+
+const createCheckoutSession = ({ courseType }) =>
+  apiRequest(
+    { url: '/payments/sessions' },
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        course_type: courseType,
+      }),
+    }
+  );
 
 export const PageCourses = () => {
   const classes = useStyles();
+
+  const [isButtonLoading, setButtonLoading] = useState('none');
+  const { stripe, isLoading: isLoadingStripe } = useStripe();
+  const { mutate: createSession, isLoading: isCreatingSession } = useMutation(
+    createCheckoutSession,
+    {
+      onMutate: ({ courseType }) => {
+        setButtonLoading(courseType);
+      },
+      onSettled: () => {
+        setButtonLoading('none');
+      },
+      onSuccess: ({ data }) => {
+        stripe.redirectToCheckout(data);
+      },
+    }
+  );
+  const isLoading = !Boolean(stripe) || isLoadingStripe || isCreatingSession;
 
   return (
     <Layout>
@@ -112,25 +156,34 @@ export const PageCourses = () => {
         <Header>Courses</Header>
 
         <Section.Part>
-          <div className={classes.content}>
-            <p>
-              The EduFina Course is your key to a financially independent
-              lifestyle. It is a comprehensive 10 module course in Montreal that
-              will help you achieve a vast understanding of financial markets
-              and how to profit from them.
-            </p>
-            <p>
-              In our unique in person training sessions, you will learn
-              everything you need to know to successfully invest your wealth in
-              stocks, bonds, funds, futures, currencies, and more. If you are
-              not satisfied with the course, we offer a full money-back
-              guarantee.
-            </p>
-            <p>
-              If you would like a more detailed guide on the topics of the
-              course, please download our course Syllabus.
-            </p>
-          </div>
+          <Grid container spacing={4}>
+            <Grid item md={7}>
+              <div className={classes.content}>
+                <p>
+                  The EduFina Course is your key to a financially independent
+                  lifestyle. It is a comprehensive 10 module course in Montreal
+                  that will help you achieve a vast understanding of financial
+                  markets and how to profit from them.
+                </p>
+                <p>
+                  In our unique in person training sessions, you will learn
+                  everything you need to know to successfully invest your wealth
+                  in stocks, bonds, funds, futures, currencies, and more. If you
+                  are not satisfied with the course, we offer a full money-back
+                  guarantee.
+                </p>
+                <p>
+                  If you would like a more detailed guide on the topics of the
+                  course, please download our course Syllabus.
+                </p>
+              </div>
+            </Grid>
+            <Grid item md={5}>
+              <Hidden smDown>
+                <Image source={getPublicImage('courses-img-01.jpg')} />
+              </Hidden>
+            </Grid>
+          </Grid>
         </Section.Part>
 
         <Section.Part variant="compact" className={classes.coursesSection}>
@@ -139,24 +192,29 @@ export const PageCourses = () => {
               <Course
                 title="Standard"
                 price={'$3,500'}
-                payment="4 installments of $875"
+                payment="contact us for installments"
+                syllabus="https://api.edufina.ca/wp-content/uploads/Course-Syllabus-Standard.pdf"
               >
                 <p>Full Financial Literacy</p>
                 <ul>
                   <li>Split with up to 8 friends</li>
-                  <li>7 x 4-hour courses</li>
+                  <li>7 x 3-hour courses</li>
                   <li>Classroom setting</li>
                   <li>Group Q&amp;A</li>
                   <li>Money-back guarantee</li>
                 </ul>
                 <div>
-                  <a
-                    href="https://api.edufina.ca/wp-content/uploads/Course-Syllabus.pdf"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                  <Button
+                    disabled={isLoading}
+                    endIcon={isButtonLoading === 'standard' && <LoopIcon />}
+                    className={'register animate-rotate-svg'}
+                    onClick={() => createSession({ courseType: 'standard' })}
                   >
                     Register Now
-                  </a>
+                  </Button>
+                </div>
+                <div>
+                  <Link to="/contact">Contact us</Link>
                 </div>
               </Course>
             </Grid>
@@ -164,7 +222,8 @@ export const PageCourses = () => {
               <Course
                 title="Intensive"
                 price={'$5,000'}
-                payment="4 installments of $1,250"
+                payment="contact us for installments"
+                syllabus="https://api.edufina.ca/wp-content/uploads/Course-Syllabus-Intensive.pdf"
               >
                 <p>Full Financial Literacy</p>
                 <ul>
@@ -175,13 +234,17 @@ export const PageCourses = () => {
                   <li>Money-back guarantee</li>
                 </ul>
                 <div>
-                  <a
-                    href="https://api.edufina.ca/wp-content/uploads/Course-Syllabus.pdf"
-                    rel="noopener noreferrer"
-                    target="_blank"
+                  <Button
+                    disabled={isLoading}
+                    endIcon={isButtonLoading === 'intensive' && <LoopIcon />}
+                    className={'animate-rotate-svg'}
+                    onClick={() => createSession({ courseType: 'intensive' })}
                   >
                     Register Now
-                  </a>
+                  </Button>
+                </div>
+                <div>
+                  <Link to="/contact">Contact us</Link>
                 </div>
               </Course>
             </Grid>

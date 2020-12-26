@@ -332,7 +332,7 @@ export const PageHome = () => {
         >
           <div className={classes.buttonGroup}>
             <Button to="/contact" color="primary" size="large" component={Link}>
-              Book
+              Contact us
             </Button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   Link,
   useLocation,
 } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
 import { useQuery, useMutation } from 'react-query';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -20,9 +21,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
+import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
 import LoopIcon from '@material-ui/icons/Loop';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import DoneIcon from '@material-ui/icons/Done';
 import { LinearGradient } from '@visx/gradient';
 import { AreaClosed, Line, Bar } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
@@ -65,9 +69,14 @@ export {
   Select,
   MenuItem,
   Card,
+  Grid,
+  Hidden,
   SvgIcon,
   LoopIcon,
+  DoneIcon,
   AttachMoneyIcon,
   /* Google ReCAPTHA */
   ReCAPTCHA,
+  /* STRIPE */
+  loadStripe,
 };

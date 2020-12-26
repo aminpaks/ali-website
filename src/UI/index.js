@@ -9,6 +9,7 @@ export * from './mediaQueries';
 export * from './Nav';
 export * from './Section';
 export * from './Size';
+export * from './Stripe';
 export * from './Theme';
 export * from './TitleLine';
 export * from './WindowResize';

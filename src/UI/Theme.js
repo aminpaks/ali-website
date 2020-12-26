@@ -87,6 +87,21 @@ const theme = createMuiTheme({
         '.margin-top--extra-large': {
           marginTop: '6rem',
         },
+
+        '@keyframes rotate': {
+          '0%': {
+            transform: 'rotate(0deg)',
+          },
+          '100%': {
+            transform: 'rotate(-360deg)',
+          },
+        },
+        '.animate-rotate-svg svg': {
+          width: '1.3em',
+          height: '1.3em',
+          animation: '$rotate 1000ms',
+          animationIterationCount: 'infinite',
+        },
       },
     },
   },

@@ -14,7 +14,7 @@ const useStyle = makeStyles({
   root: {
     display: 'block',
     maxWidth: '100%',
-    float: getFloat,
+    borderRadius: '1em',
   },
 });
 

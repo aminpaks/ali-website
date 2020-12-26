@@ -28,7 +28,7 @@ export const Footer = () => {
       <Container>
         <div className={classes.innerContainer}>
           <div>
-            <p>Copyright © 2020 EduFina - All Rights Reserved.</p>
+            <p>Copyright © 2020 EduFina Inc. - All Rights Reserved.</p>
           </div>
           <div>
             <Image

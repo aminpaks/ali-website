@@ -101,7 +101,7 @@ const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   );
 });
 
-const useStyle = makeStyles(({ palette, breakpoints }) => ({
+const useStyle = makeStyles(({ palette }) => ({
   root: {
     top: 0,
     left: 0,
@@ -109,7 +109,10 @@ const useStyle = makeStyles(({ palette, breakpoints }) => ({
     padding: '20px 0',
     position: 'fixed',
     zIndex: 99,
-    backgroundColor: ({ bgColor }) => bgColor,
+    backgroundColor: `rgba(245,245,245,0.9)`,
+    '&.is-bg-transparent': {
+      backgroundColor: 'transparent',
+    },
   },
   innerContainer: {
     display: 'flex',
@@ -267,11 +270,7 @@ export const Nav = () => {
   const navContainerRef = useRef();
   const [open, setOpen] = useState(false);
   const [client, setClient] = useState({ width: 0, height: 0 });
-  const classes = useStyle({
-    open,
-    client,
-    bgColor: pathname === '/' ? 'transparent' : 'rgba(245,245,245,0.9)',
-  });
+  const classes = useStyle();
   const handleMenuToggle = useCallback(() => setOpen((v) => !v), [setOpen]);
   const handleMenuClose = useCallback(
     ({ target }) => {
@@ -300,7 +299,9 @@ export const Nav = () => {
   useOutsideClick(navRef, handleMenuClose);
 
   return (
-    <div className={classes.root}>
+    <div
+      className={clsx(classes.root, { 'is-bg-transparent': pathname === '/' })}
+    >
       <Container>
         <div className={classes.innerContainer}>
           <Link to="/" className={classes.navLink}>
