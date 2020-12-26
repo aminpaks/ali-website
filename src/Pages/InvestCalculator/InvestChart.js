@@ -5,6 +5,7 @@ import {
   scaleLinear,
   makeStyles,
   clsx,
+  useTheme,
 } from '../../dependencies';
 import { useEffect, useMemo, useRef } from 'react';
 import { Counter } from './countUp';
@@ -46,6 +47,7 @@ const getIndex = (scale) => (_, i) => scale(i);
 
 export const InvestChart = ({ width, height, data }) => {
   const classes = useStyles();
+  const { palette } = useTheme();
 
   const loadingScales = useMemo(() => getLoadingScales(width, height), [
     width,
@@ -101,7 +103,11 @@ export const InvestChart = ({ width, height, data }) => {
     <>
       <svg width={width} height={height}>
         <LinearGradient id="loading-gradient" from={'#aaa'} to={'#efefef'} />
-        <LinearGradient id="edufina-gradient" from={'#0063b2'} to={'#0063b2'} />
+        <LinearGradient
+          id="edufina-gradient"
+          from={palette.accent.main}
+          to={palette.accent.dark}
+        />
         <LinearGradient id="bank-gradient" from={'#c91f17'} to={'#884744'} />
 
         <AnimatedAreaClosed
@@ -123,7 +129,7 @@ export const InvestChart = ({ width, height, data }) => {
           y={scaleY}
           yScale={scaleY}
           strokeWidth={1.5}
-          stroke="#003f72"
+          stroke={palette.accent.dark}
           fill="url(#edufina-gradient)"
           curve={curveMonotoneX}
         />

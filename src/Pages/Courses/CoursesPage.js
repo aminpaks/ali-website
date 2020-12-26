@@ -198,7 +198,7 @@ export const PageCourses = () => {
                 <p>Full Financial Literacy</p>
                 <ul>
                   <li>Split with up to 8 friends</li>
-                  <li>7 x 3-hour courses</li>
+                  <li>5 x 3-hour courses</li>
                   <li>Classroom setting</li>
                   <li>Group Q&amp;A</li>
                   <li>Money-back guarantee</li>

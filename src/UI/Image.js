@@ -1,15 +1,5 @@
 import { clsx, makeStyles } from '../dependencies';
 
-const getFloat = (float) => {
-  switch (float) {
-    case 'right':
-      return 'right';
-
-    default:
-      return undefined;
-  }
-};
-
 const useStyle = makeStyles({
   root: {
     display: 'block',

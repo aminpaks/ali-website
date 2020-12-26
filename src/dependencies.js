@@ -27,6 +27,10 @@ import LoopIcon from '@material-ui/icons/Loop';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import DoneIcon from '@material-ui/icons/Done';
+import TextsmsIcon from '@material-ui/icons/Textsms';
+import PhoneIcon from '@material-ui/icons/Phone';
+import BusinessIcon from '@material-ui/icons/Business';
+import DraftsIcon from '@material-ui/icons/Drafts';
 import { LinearGradient } from '@visx/gradient';
 import { AreaClosed, Line, Bar } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
@@ -75,6 +79,10 @@ export {
   LoopIcon,
   DoneIcon,
   AttachMoneyIcon,
+  TextsmsIcon,
+  PhoneIcon,
+  BusinessIcon,
+  DraftsIcon,
   /* Google ReCAPTHA */
   ReCAPTCHA,
   /* STRIPE */
