@@ -24,9 +24,16 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       maxWidth: 'calc(max(100%, 200px) - 4rem)',
     },
   },
+  nda: {
+    color: 'red',
+    textAlign: "center",
+    marginBottom: '5rem',
+    marginTop: '-5rem'
+  },
   content: {
     '& > div,p': {
       marginBottom: '1rem',
+      fontSize: 30
     },
   },
   boxContainer: {
@@ -160,21 +167,14 @@ export const PageCourses = () => {
             <Grid item md={7}>
               <div className={classes.content}>
                 <p>
-                  The EduFina Course is your key to a financially independent
-                  lifestyle. It is a comprehensive 10 module course in Montreal
-                  that will help you achieve a vast understanding of financial
-                  markets and how to profit from them.
+                Step 1: Register now with your email
                 </p>
                 <p>
-                  In our unique in person training sessions, you will learn
-                  everything you need to know to successfully invest your wealth
-                  in stocks, bonds, funds, futures, currencies, and more. If you
-                  are not satisfied with the course, we offer a full money-back
-                  guarantee.
+                  Step 2: An instructor will contact you 
+                  in under 24 hours to schedule your sessions
                 </p>
                 <p>
-                  If you would like a more detailed guide on the topics of the
-                  course, please download our course Syllabus.
+                  Step 3: Learn to invest on your own
                 </p>
               </div>
             </Grid>
@@ -185,6 +185,10 @@ export const PageCourses = () => {
             </Grid>
           </Grid>
         </Section.Part>
+        
+              <div className={classes.nda}>
+                All students will be required to sign a confidentiality agreement
+              </div>
 
         <Section.Part variant="compact" className={classes.coursesSection}>
           <Grid container spacing={8}>
