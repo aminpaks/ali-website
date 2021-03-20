@@ -37,6 +37,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "publish": "yarn run build && scp -r ./build/* w2nj6a7ueolb@edufina.ca:/home/w2nj6a7ueolb/public_html",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
