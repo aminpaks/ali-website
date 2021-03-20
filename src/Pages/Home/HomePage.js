@@ -264,7 +264,7 @@ export const PageHome = () => {
         >
           <div className="text">
             <div>
-              <h2>Financial Literacy Course</h2>
+              <h2>Financial Literacy Education</h2>
               <span>Money-back guarantee</span>
             </div>
           </div>
