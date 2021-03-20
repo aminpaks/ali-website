@@ -9,7 +9,6 @@ import {
   useLocation,
   Grid,
   PhoneIcon,
-  TextsmsIcon,
   BusinessIcon,
   DraftsIcon,
 } from "../../dependencies";

@@ -1,7 +1,4 @@
 import { makeStyles, Container } from "../dependencies";
-import { getPublicImage } from "../Utils";
-import { Image } from "./Image";
-// import appLogo from "../Assets/logo.png";
 import appLogo from "../Assets/logo1.png";
 
 const useStyles = makeStyles({
