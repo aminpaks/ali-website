@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState } from "react";
 import {
   AttachMoneyIcon,
   clsx,
@@ -9,7 +9,7 @@ import {
   Select,
   TextField,
   useMutation,
-} from '../../dependencies';
+} from "../../dependencies";
 import {
   Button,
   Header,
@@ -17,109 +17,109 @@ import {
   Section,
   usePhoneMediaQuery,
   useSize,
-} from '../../UI';
-import { apiRequest } from '../../fetch';
+} from "../../UI";
+import { apiRequest } from "../../fetch";
 import {
   getPartialUpdate,
   getUserSessionId,
   setUserSessionId,
-} from '../../Utils';
-import { InvestChart } from './InvestChart';
+} from "../../Utils";
+import { InvestChart } from "./InvestChart";
 
 const useStyle = makeStyles(({ breakpoints }) => ({
   container: {
-    display: 'block',
-    position: 'relative',
+    display: "block",
+    position: "relative",
   },
   mdcTextField: {
-    width: '100%',
-    marginBottom: '16px',
+    width: "100%",
+    marginBottom: "16px",
   },
   mdcSelect: {
-    width: '100%',
+    width: "100%",
   },
   mdcButton: {
-    width: '100%',
+    width: "100%",
   },
 
   lineContainer: {
-    '&,& .MuiInputBase-root': {
-      fontSize: '2rem',
+    "&,& .MuiInputBase-root": {
+      fontSize: "2rem",
     },
-    '& > div': {
-      marginBottom: '1rem',
+    "& > div": {
+      marginBottom: "1rem",
     },
   },
   line: {
-    display: 'block',
+    display: "block",
   },
 
   inputs: {
     width: 200,
-    verticalAlign: 'baseline',
+    verticalAlign: "baseline",
   },
   inputInitialAmount: {
     width: 200,
   },
   inputDuration: {
     width: 120,
-    '& input': {
-      textAlign: 'right',
+    "& input": {
+      textAlign: "right",
     },
   },
   inputInvestAmount: {
     width: 180,
   },
 
-  '@keyframes rotate': {
-    '0%': {
-      transform: 'rotate(0deg)',
+  "@keyframes rotate": {
+    "0%": {
+      transform: "rotate(0deg)",
     },
-    '100%': {
-      transform: 'rotate(-360deg)',
+    "100%": {
+      transform: "rotate(-360deg)",
     },
   },
   buttonCalculate: {
-    fontSize: '1.8rem',
-    '& svg': {
-      width: '2rem',
-      height: '2rem',
-      animation: '$rotate 1000ms',
-      animationIterationCount: 'infinite',
+    fontSize: "1.8rem",
+    "& svg": {
+      width: "2rem",
+      height: "2rem",
+      animation: "$rotate 1000ms",
+      animationIterationCount: "infinite",
     },
   },
 
   col: {
     margin: 0,
-    width: '100%',
-    display: 'block',
-    position: 'relative',
+    width: "100%",
+    display: "block",
+    position: "relative",
   },
   colLeft: {
-    [breakpoints.up('md')]: {
-      maxWidth: '60vw',
+    [breakpoints.up("md")]: {
+      maxWidth: "60vw",
       zIndex: 1,
     },
   },
   colRight: {},
 
   chartContainer: {
-    '& .chart-wrapper': {
-      height: '100%',
-      width: '100%',
-      position: 'relative',
+    "& .chart-wrapper": {
+      height: "100%",
+      width: "100%",
+      position: "relative",
     },
-    [breakpoints.down('md')]: {
-      width: '100%',
+    [breakpoints.down("md")]: {
+      width: "100%",
       height: 600,
-      position: 'relative',
+      position: "relative",
     },
-    [breakpoints.up('md')]: {
+    [breakpoints.up("md")]: {
       top: 200,
       left: 0,
-      width: '100vw',
-      height: 'calc(100vh - 200px)',
-      position: 'fixed',
+      width: "100vw",
+      height: "calc(100vh - 200px)",
+      position: "fixed",
     },
   },
 }));
@@ -134,7 +134,7 @@ export const PageInvestCalculator = () => {
   const [state, setState] = useState({
     initialAmount: 1000,
     investDuration: 10,
-    cycleType: 'monthly',
+    cycleType: "monthly",
     cycleAmount: 500,
   });
   const { initialAmount, investDuration, cycleType, cycleAmount } = state;
@@ -151,7 +151,7 @@ export const PageInvestCalculator = () => {
             window.scrollTo({
               top,
               left: 0,
-              behavior: 'smooth',
+              behavior: "smooth",
             });
           }
         }
@@ -171,7 +171,7 @@ export const PageInvestCalculator = () => {
           <div className={clsx(classes.col, classes.colLeft)}>
             <div className={classes.lineContainer}>
               <div>
-                I want to invest an initial amount of{' '}
+                I want to invest an initial amount of{" "}
                 <TextField
                   InputProps={{
                     startAdornment: (
@@ -183,31 +183,31 @@ export const PageInvestCalculator = () => {
                   className={clsx(classes.inputs, classes.inputInitialAmount)}
                   type="number"
                   value={initialAmount}
-                  onChange={getPartialUpdate(setState, 'initialAmount')}
+                  onChange={getPartialUpdate(setState, "initialAmount")}
                 />
               </div>
               <div>
-                for{' '}
+                for{" "}
                 <TextField
                   className={clsx(classes.inputs, classes.inputDuration)}
                   type="number"
                   value={investDuration}
-                  onChange={getPartialUpdate(setState, 'investDuration')}
-                />{' '}
+                  onChange={getPartialUpdate(setState, "investDuration")}
+                />{" "}
                 years
               </div>
               <div>
-                with{' '}
+                with{" "}
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={cycleType}
-                  onChange={getPartialUpdate(setState, 'cycleType')}
+                  onChange={getPartialUpdate(setState, "cycleType")}
                 >
                   <MenuItem value="monthly">monthly</MenuItem>
                   <MenuItem value="biweekly">biweekly</MenuItem>
-                </Select>{' '}
-                investments of{' '}
+                </Select>{" "}
+                investments of{" "}
                 <TextField
                   InputProps={{
                     startAdornment: (
@@ -219,7 +219,7 @@ export const PageInvestCalculator = () => {
                   className={clsx(classes.inputs, classes.inputInvestAmount)}
                   type="number"
                   value={cycleAmount}
-                  onChange={getPartialUpdate(setState, 'cycleAmount')}
+                  onChange={getPartialUpdate(setState, "cycleAmount")}
                 />
               </div>
               <div>
@@ -266,13 +266,14 @@ function doQueryInvestment({
   cycleType,
   cycleAmount,
 }) {
+  // console.log(initialAmount, 'innnnnnnn');
   return apiRequest(
-    { url: '/calculators' },
+    { url: "/calculators" },
     {
-      method: 'POST',
-      cache: 'no-cache',
+      method: "POST",
+      cache: "no-cache",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         initialAmount,
@@ -283,6 +284,8 @@ function doQueryInvestment({
       }),
     }
   ).then(({ data }) => {
+    // console.log(data,'dataa');
+
     if (data.sessionId) {
       setUserSessionId(data.sessionId);
     }

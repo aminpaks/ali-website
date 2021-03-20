@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 import {
   makeStyles,
   useMutation,
@@ -12,61 +12,61 @@ import {
   TextsmsIcon,
   BusinessIcon,
   DraftsIcon,
-} from '../../dependencies';
-import { apiRequest } from '../../fetch';
-import { Button, Header, Layout, Section } from '../../UI';
-import { DisplayError } from '../../UI/DisplayError';
-import { getPublicBackgroundUrl } from '../../Utils';
+} from "../../dependencies";
+import { apiRequest } from "../../fetch";
+import { Button, Header, Layout, Section } from "../../UI";
+import { DisplayError } from "../../UI/DisplayError";
+import { getPublicBackgroundUrl } from "../../Utils";
 
 const useStyle = makeStyles(({ palette, spacing, breakpoints }) => ({
   map: {
     height: 400,
-    backgroundImage: getPublicBackgroundUrl('edufina-location-map.jpg'),
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
+    backgroundImage: getPublicBackgroundUrl("edufina-location-map.jpg"),
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
   },
   formControl: {
     minWidth: 320,
-    display: 'flex',
+    display: "flex",
     margin: spacing(1),
     marginBottom: spacing(2),
-    [breakpoints.up('md')]: {
+    [breakpoints.up("md")]: {
       maxWidth: 600,
     },
   },
   successMessage: {
     marginBottom: spacing(4),
-    '& .heading': {
+    "& .heading": {
       marginBottom: spacing(2),
     },
   },
   reachOut: {
-    display: 'block',
-    borderLeft: '1px solid ' + palette.accent.main,
+    display: "block",
+    borderLeft: "1px solid " + palette.accent.main,
     paddingLeft: spacing(4),
-    '& > div': {
+    "& > div": {
       marginTop: spacing(1),
       marginBottom: spacing(1),
-      '& > div': {
+      "& > div": {
         marginLeft: spacing(1),
-        display: 'inline-block',
+        display: "inline-block",
       },
-      '&:nth-child(4)': {
-        '& > div': {
+      "&:nth-child(4)": {
+        "& > div": {
           marginLeft: spacing(1.6),
         },
-        '& svg': {
-          verticalAlign: 'top',
+        "& svg": {
+          verticalAlign: "top",
         },
       },
     },
-    '& span': {
-      display: 'block',
+    "& span": {
+      display: "block",
     },
-    '& svg': {
+    "& svg": {
       color: palette.accent.main,
-      display: 'inline-block',
-      verticalAlign: 'text-bottom',
+      display: "inline-block",
+      verticalAlign: "text-bottom",
     },
   },
 }));
@@ -75,10 +75,10 @@ const postContact = ({ fullname, email, phone, notes }) =>
   apiRequest(
     { url: `/contact` },
     {
-      method: 'POST',
-      cache: 'no-cache',
+      method: "POST",
+      cache: "no-cache",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         fullname,
@@ -110,29 +110,29 @@ export const PageContact = () => {
       },
     }
   );
-  const errors = isError ? error.message : '';
+  const errors = isError ? error.message : "";
   const fullnameError =
-    errors.indexOf('fullname') > 0
-      ? 'Provide a valid fullname, it must be longer than 3 characters'
+    errors.indexOf("fullname") > 0
+      ? "Provide a valid fullname, it must be longer than 3 characters"
       : undefined;
   const emailError =
-    errors.indexOf('email') > 0 ? 'Provide a valid email address' : undefined;
+    errors.indexOf("email") > 0 ? "Provide a valid email address" : undefined;
   const phoneError =
-    errors.indexOf('phone') > 0
-      ? 'Provide a valid phone number ex: (999) 999-9999'
+    errors.indexOf("phone") > 0
+      ? "Provide a valid phone number ex: (999) 999-9999"
       : undefined;
   const notesError =
-    errors.indexOf('notes') > 0
+    errors.indexOf("notes") > 0
       ? `Provide at least 20 characters what you would like to know`
       : undefined;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const from = params.has('from') ? params.get('from').toLowerCase() : '';
-    if (from === 'courses' && !formFields.notes) {
+    const from = params.has("from") ? params.get("from").toLowerCase() : "";
+    if (from === "courses" && !formFields.notes) {
       handleFormFieldUpdate({
         target: {
-          name: 'notes',
+          name: "notes",
           value: `I would like to buy your course.\nHere is how I would like to pay...`,
         },
       });
@@ -162,7 +162,7 @@ export const PageContact = () => {
               <TextField
                 label="Fullname"
                 name="fullname"
-                value={formFields['fullname'] ?? ''}
+                value={formFields["fullname"] ?? ""}
                 error={Boolean(fullnameError)}
                 helperText={fullnameError}
                 className={classes.formControl}
@@ -173,7 +173,7 @@ export const PageContact = () => {
                 label="Email"
                 name="email"
                 type="email"
-                value={formFields['email'] ?? ''}
+                value={formFields["email"] ?? ""}
                 error={Boolean(emailError)}
                 helperText={emailError}
                 className={classes.formControl}
@@ -184,7 +184,7 @@ export const PageContact = () => {
                 label="Phone"
                 name="phone"
                 type="phone"
-                value={formFields['phone'] ?? ''}
+                value={formFields["phone"] ?? ""}
                 error={Boolean(phoneError)}
                 helperText={phoneError}
                 className={classes.formControl}
@@ -196,7 +196,7 @@ export const PageContact = () => {
                 label="Notes"
                 name="notes"
                 type="notes"
-                value={formFields['notes'] ?? ''}
+                value={formFields["notes"] ?? ""}
                 error={Boolean(notesError)}
                 helperText={notesError}
                 className={classes.formControl}
@@ -208,14 +208,14 @@ export const PageContact = () => {
                   sitekey="6LeFcg4aAAAAAFvvptMQur7OvVcc6MI6jnZJ6xaW"
                   onChange={(value) => {
                     handleFormFieldUpdate({
-                      target: { name: 'captcha', value },
+                      target: { name: "captcha", value },
                     });
                   }}
                 />
               </div>
 
               <Button
-                style={{ marginTop: '1rem' }}
+                style={{ marginTop: "1rem" }}
                 disabled={isFormStateValid(formFields)}
                 onClick={() => {
                   doContact(formFields);
@@ -228,16 +228,18 @@ export const PageContact = () => {
             <Grid item sm={12} md={6}>
               <div className={classes.reachOut}>
                 <div>
-                  <DraftsIcon />{' '}
+                  <DraftsIcon />{" "}
                   <div>
                     <span>info@edufina.ca</span>
                   </div>
                 </div>
                 <div>
-                  <PhoneIcon /> <div>(514) 999-1010</div>
+                  {/* <PhoneIcon /> <div>(514) 999-1010</div> */}
+                  <PhoneIcon /> <div>1 (855)-338-3462</div>
                 </div>
                 <div>
-                  <TextsmsIcon /> <div>(514) 999-1010</div>
+                  {/* <TextsmsIcon /> <div>(514) 999-1010</div>
+                  <TextsmsIcon /> <div>1 (855)-338-3462</div> */}
                 </div>
                 <div>
                   <BusinessIcon />

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { noop } from '../../Utils';
+import { useEffect, useRef, useState } from "react";
+import { noop } from "../../Utils";
 
 // How long you want the animation to take, in ms
 const animationDuration = 1000;
@@ -23,7 +23,10 @@ const animateCountTo = (countTo, counterRef, callback = noop) => {
     // progress on a curve
     const progress = easeOutQuad(frame / totalFrames);
     // Use the progress value to calculate the current count
-    const currentCount = Math.round(countTo * progress);
+    const currentCount = 
+    // Math.round(
+      countTo * progress
+      // );
 
     // Notify
     callback(currentCount);
@@ -44,20 +47,21 @@ export const Counter = ({ className, value, onDisplayValue = noop }) => {
   const handleValueDisplay = useRef();
   const counterRef = useRef();
   const [displayValue, setDisplayValue] = useState(value);
+
   useEffect(() => {
     handleValueDisplay.current = onDisplayValue;
   });
   useEffect(() => {
     if (
-      typeof value === 'number' &&
+      typeof value === "number" &&
+      // console.log(value,'valuee')&&
       !Number.isNaN(value) &&
-      typeof handleValueDisplay.current === 'function'
+      typeof handleValueDisplay.current === "function"
     ) {
       animateCountTo(value, counterRef, (c) => {
         setDisplayValue(handleValueDisplay.current(c));
       });
     }
   }, [value]);
-
   return <span className={className}>{displayValue}</span>;
 };

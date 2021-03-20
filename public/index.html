@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-5J3RGNQ");
+    </script>
+    <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+    <meta
+      name="viewport"
+      content="minimum-scale=1, initial-scale=1, width=device-width"
+    />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="EduFina is the first, money-back guarantee, financial literacy course in Canada. Learn how and when to invest in stocks, bonds and financial derivatives while minimizing taxes and optimizing your return on investment."
     />
+
+    <link rel="canonical" href="http://edufina.com/" />
+    <!-- <link rel="contact" href="http://edufina.com/contact" /> -->
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -25,8 +46,12 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>EduFina - Canada's Financial Literacy Course</title>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,900;1,400;1,900&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,900;1,400;1,900&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
@@ -36,9 +61,35 @@
 
       You can add webfonts, meta tags, or analytics to this file.
       The build step will place the bundled scripts into the <body> tag.
+        
+        To begin the development, run `npm start` or `yarn start`.
+        To create a production bundle, use `npm run build` or `yarn build`.  
+      -->
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-5J3RGNQ"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-XSK9C06BSS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-XSK9C06BSS");
+    </script>
   </body>
 </html>

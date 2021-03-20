@@ -1,14 +1,16 @@
-import React, { useCallback, useRef, useState, forwardRef } from 'react';
+import React, { useCallback, useRef, useState, forwardRef } from "react";
 import {
   clsx,
   Link,
   useLocation,
   Container,
   makeStyles,
-} from '../dependencies';
-import { useOutsideClick } from '../Utils';
-import { iPhoneLandscapeMediaQuery } from './mediaQueries';
-import { useWindowResize } from './WindowResize';
+} from "../dependencies";
+import { useOutsideClick } from "../Utils";
+import { iPhoneLandscapeMediaQuery } from "./mediaQueries";
+import { useWindowResize } from "./WindowResize";
+// import appLogo from "../Assets/logo.png";
+import appLogo from "../Assets/logo1.png";
 
 const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
   navButton: {
@@ -18,67 +20,67 @@ const useNavButtonStyle = makeStyles(({ breakpoints, palette }) => ({
     margin: -9,
     marginRight: 6,
     borderRadius: 2,
-    cursor: 'pointer',
+    cursor: "pointer",
     zIndex: 2,
-    [breakpoints.up('sm')]: {
+    [breakpoints.up("sm")]: {
       marginRight: 4,
     },
-    '&,& span': {
-      display: 'block',
+    "&,& span": {
+      display: "block",
     },
-    '& > span': {
+    "& > span": {
       width: 18,
       height: 18,
-      overflow: 'hidden',
-      position: 'relative',
-      backgroundColor: 'rgba(0,0,0,0)',
-      pointerEvents: 'none',
-      '& > span': {
+      overflow: "hidden",
+      position: "relative",
+      backgroundColor: "rgba(0,0,0,0)",
+      pointerEvents: "none",
+      "& > span": {
         top: 8,
-        backgroundColor: '#000',
-        transition: '800ms 200ms ease',
-        '&::before': {
+        backgroundColor: "#000",
+        transition: "800ms 200ms ease",
+        "&::before": {
           top: -5,
-          transform: 'rotate(0deg)',
+          transform: "rotate(0deg)",
         },
-        '&::after': {
+        "&::after": {
           top: 5,
-          transform: 'rotate(0deg)',
+          transform: "rotate(0deg)",
         },
-        '&,&::before,&::after': {
-          width: '100%',
+        "&,&::before,&::after": {
+          width: "100%",
           height: 2,
           content: '""',
-          display: 'block',
-          backgroundColor: '#000',
-          position: 'absolute',
-          transformOrigin: '50% 50%',
+          display: "block",
+          backgroundColor: "#000",
+          position: "absolute",
+          transformOrigin: "50% 50%",
         },
-        '&::before,&::after': {
-          transition: '200ms ease-out',
+        "&::before,&::after": {
+          transition: "200ms ease-out",
         },
       },
     },
-    '&.is-open': {
-      '&:hover > span': {
-        backgroundColor: '#000',
-        '& > span': {
-          '&::before,&::after': {
-            backgroundColor: '#fff',
+    "&.is-open": {
+      "&:hover > span": {
+        backgroundColor: "#000",
+        "& > span": {
+          "&::before,&::after": {
+            backgroundColor: "#fff",
           },
         },
       },
-      '& > span': {
-        '& > span': {
-          transition: 'none',
-          backgroundColor: 'transparent',
-          '&::before': {
+      "& > span": {
+        "& > span": {
+          transition: "none",
+          backgroundColor: "transparent",
+          "&::before": {
             top: 0,
-            transform: 'rotate(45deg)',
+            transform: "rotate(45deg)",
           },
-          '&::after': {
+          "&::after": {
             top: 0,
-            transform: 'rotate(-45deg)',
+            transform: "rotate(-45deg)",
           },
         },
       },
@@ -91,7 +93,7 @@ const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   return (
     <span
       ref={ref}
-      className={clsx(classes.navButton, { 'is-open': isOpen })}
+      className={clsx(classes.navButton, { "is-open": isOpen })}
       onClick={onClick}
     >
       <span>
@@ -101,138 +103,138 @@ const NavButton = forwardRef(({ isOpen, onClick }, ref) => {
   );
 });
 
-const useStyle = makeStyles(({ palette }) => ({
+const useStyle = makeStyles(({ palette, breakpoints }) => ({
   root: {
     top: 0,
     left: 0,
     right: 0,
-    padding: '20px 0',
-    position: 'fixed',
+    padding: "20px 0",
+    position: "fixed",
     zIndex: 99,
     backgroundColor: `rgba(245,245,245,0.9)`,
-    '&.is-bg-transparent': {
-      backgroundColor: 'transparent',
+    "&.is-bg-transparent": {
+      backgroundColor: "transparent",
     },
   },
   innerContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    alignContent: 'space-between',
+    display: "flex",
+    alignItems: "center",
+    alignContent: "space-between",
   },
   logo: {
     margin: 0,
-    display: 'block',
-    '& span': {
+    display: "block",
+    "& span": {
       color: palette.accent.main,
     },
   },
   navContainer: {
-    display: 'flex',
-    flex: '1 0 auto',
-    justifyContent: 'flex-end',
-    position: 'relative',
+    display: "flex",
+    flex: "1 0 auto",
+    justifyContent: "flex-end",
+    position: "relative",
 
-    '& > nav': {
+    "& > nav": {
       top: -24,
       right: -24,
       width: 0,
       height: 0,
-      display: 'block',
-      position: 'absolute',
-      overflow: 'hidden',
+      display: "block",
+      position: "absolute",
+      overflow: "hidden",
       padding: 20,
       paddingTop: 56,
-      borderRadius: '0.4em',
-      border: '1px solid #eee',
-      boxSizing: 'content-box',
-      backgroundColor: 'transparent',
-      borderColor: 'rgba(0,0,0,0)',
-      boxShadow: '0 0 0px rgba(0,0,0,0)',
-      visibility: 'hidden',
+      borderRadius: "0.4em",
+      border: "1px solid #eee",
+      boxSizing: "content-box",
+      backgroundColor: "transparent",
+      borderColor: "rgba(0,0,0,0)",
+      boxShadow: "0 0 0px rgba(0,0,0,0)",
+      visibility: "hidden",
       transition:
-        '180ms ease-in-out all, 160ms 140ms ease-out width, 200ms ease-in height',
-      '& > span': {
-        display: 'block',
+        "180ms ease-in-out all, 160ms 140ms ease-out width, 200ms ease-in height",
+      "& > span": {
+        display: "block",
       },
     },
-    '&.is-open > nav': {
+    "&.is-open > nav": {
       top: -20,
       right: -6,
-      width: 'var(--expandedWidth)',
-      height: 'var(--expandedHeight)',
-      backgroundColor: '#fff',
-      borderColor: 'rgba(0,0,0,0.16)',
-      boxShadow: '0 0 8px rgba(0,0,0,0.1)',
-      visibility: 'visible',
+      width: "var(--expandedWidth)",
+      height: "var(--expandedHeight)",
+      backgroundColor: "#fff",
+      borderColor: "rgba(0,0,0,0.16)",
+      boxShadow: "0 0 8px rgba(0,0,0,0.1)",
+      visibility: "visible",
       transition:
-        '180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height',
+        "180ms ease-in-out all, 200ms ease-out width, 200ms 140ms ease-out height",
     },
     [`@media ${iPhoneLandscapeMediaQuery}`]: {
-      '& .real-links-container span': {
-        display: 'block',
+      "& .real-links-container span": {
+        display: "block",
       },
-      '&,& > nav': {
-        transition: 'none !important',
+      "&,& > nav": {
+        transition: "none !important",
       },
-      '& > nav': {
+      "& > nav": {
         top: -30,
         right: -60,
-        position: 'fixed',
+        position: "fixed",
         padding: 35,
         paddingTop: 70,
-        boxSizing: 'border-box',
-        '& .real-links-container': {
-          width: '100%',
-          height: '100%',
-          position: 'relative',
-          overflow: 'scroll',
-          boxSizing: 'border-box',
-          '& > span': {
-            '& > a': {
-              textAlign: 'center',
+        boxSizing: "border-box",
+        "& .real-links-container": {
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          overflow: "scroll",
+          boxSizing: "border-box",
+          "& > span": {
+            "& > a": {
+              textAlign: "center",
             },
             // paddingRight: 10,
           },
         },
       },
-      '&.is-open > nav': {
+      "&.is-open > nav": {
         top: 0,
         right: 0,
-        width: '100vw',
-        height: 'var(--windowHeight)',
+        width: "100vw",
+        height: "var(--windowHeight)",
         borderRadius: 0,
-        borderColor: 'rgba(0,0,0,0)',
+        borderColor: "rgba(0,0,0,0)",
       },
     },
-    '& a': {
-      color: '#000',
-      display: 'block',
-      textDecoration: 'none',
-      padding: '1em 0',
-      minWidth: '14em',
-      textAlign: 'right',
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      cursor: 'pointer',
-      transition: '180ms ease-in-out, color 100ms ease',
-      '&:hover': {
+    "& a": {
+      color: "#000",
+      display: "block",
+      textDecoration: "none",
+      padding: "1em 0",
+      minWidth: "14em",
+      textAlign: "right",
+      position: "relative",
+      whiteSpace: "nowrap",
+      cursor: "pointer",
+      transition: "180ms ease-in-out, color 100ms ease",
+      "&:hover": {
         // color: '#fff',
         // '&::after': {
         //   width: '100%',
         // },
-        '& > span': {
-          padding: '0 1em',
+        "& > span": {
+          padding: "0 1em",
         },
       },
-      '&:not(:last-of-type)': {
-        borderBottom: '1px dotted #000',
+      "&:not(:last-of-type)": {
+        borderBottom: "1px dotted #000",
       },
-      '& > span': {
+      "& > span": {
         zIndex: 1,
-        display: 'block',
-        position: 'relative',
-        transition: 'inherit',
-        pointerEvents: 'none',
+        display: "block",
+        position: "relative",
+        transition: "inherit",
+        pointerEvents: "none",
       },
       // '&::after': {
       //   top: 0,
@@ -249,16 +251,22 @@ const useStyle = makeStyles(({ palette }) => ({
   navPlaceholder: {
     top: 0,
     right: 0,
-    position: 'absolute',
-    visibility: 'hidden',
+    position: "absolute",
+    visibility: "hidden",
     zIndex: -1,
     [`@media ${iPhoneLandscapeMediaQuery}`]: {
-      display: 'none !important',
+      display: "none !important",
     },
   },
   navLink: {
-    color: 'inherit',
-    textDecoration: 'none',
+    color: "inherit",
+    textDecoration: "none",
+  },
+  appLogo: {
+    width: "13%",
+    [breakpoints.down("xs")]: {
+      width: "35%",
+    },
   },
 }));
 
@@ -282,7 +290,7 @@ export const Nav = () => {
   );
   const handleNavLinkClick = useCallback(
     ({ target }) => {
-      if (target.tagName === 'A') {
+      if (target.tagName === "A") {
         setOpen(false);
       }
     },
@@ -300,22 +308,23 @@ export const Nav = () => {
 
   return (
     <div
-      className={clsx(classes.root, { 'is-bg-transparent': pathname === '/' })}
+      className={clsx(classes.root, { "is-bg-transparent": pathname === "/" })}
     >
       <Container>
         <div className={classes.innerContainer}>
           <Link to="/" className={classes.navLink}>
-            <h1 className={classes.logo}>
+            <img src={appLogo} alt="" className={classes.appLogo} />
+            {/* <h1 className={classes.logo}>
               Edu<span>Fina</span>
-            </h1>
+            </h1> */}
           </Link>
           <div
             ref={navContainerRef}
             style={{
-              '--expandedWidth': client.width + 'px',
-              '--expandedHeight': client.height + 'px',
+              "--expandedWidth": client.width + "px",
+              "--expandedHeight": client.height + "px",
             }}
-            className={clsx(classes.navContainer, { 'is-open': open })}
+            className={clsx(classes.navContainer, { "is-open": open })}
           >
             <NavButton
               ref={navLinkRef}

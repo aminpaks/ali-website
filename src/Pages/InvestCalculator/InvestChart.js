@@ -6,46 +6,47 @@ import {
   makeStyles,
   clsx,
   useTheme,
-} from '../../dependencies';
-import { useEffect, useMemo, useRef } from 'react';
-import { Counter } from './countUp';
-import { noop } from '../../Utils';
+} from "../../dependencies";
+import { useEffect, useMemo, useRef } from "react";
+import { Counter } from "./countUp";
+import { noop } from "../../Utils";
 
 const useStyles = makeStyles({
   investValueLabel: {
-    top: '100vh',
+    top: "100vh",
     right: 0,
-    fontSize: '1.5rem',
-    marginTop: '-2rem',
-    lineHeight: '2rem',
-    position: 'absolute',
-    minWidth: '36vw',
-    transition: '500ms ease',
-    '&.count-in': {
-      transition: '1s',
+    fontSize: "1.5rem",
+    marginTop: "-2rem",
+    lineHeight: "2rem",
+    position: "absolute",
+    minWidth: "36vw",
+    transition: "500ms ease",
+    "&.count-in": {
+      transition: "1s",
     },
-    borderBottom: '2px dotted #000',
-    textShadow: '1px 1px 14px #fff, -1px -1px 14px #fff',
-    pointerEvents: 'none',
-    '& span': {
-      display: 'block',
-      '&:nth-of-type(2)': {
-        position: 'absolute',
-        fontSize: '1rem',
+    borderBottom: "2px dotted #000",
+    textShadow: "1px 1px 14px #fff, -1px -1px 14px #fff",
+    pointerEvents: "none",
+    "& span": {
+      display: "block",
+      "&:nth-of-type(2)": {
+        position: "absolute",
+        fontSize: "1rem",
       },
     },
   },
   investValueBank: {
-    borderBottomColor: '#c91f17',
+    borderBottomColor: "#c91f17",
   },
   investValueEduFina: {
-    borderBottomColor: '#0063b2',
+    borderBottomColor: "#0063b2",
   },
 });
 
 const getIndex = (scale) => (_, i) => scale(i);
 
 export const InvestChart = ({ width, height, data }) => {
+  console.log(data, "data");
   const classes = useStyles();
   const { palette } = useTheme();
 
@@ -81,6 +82,7 @@ export const InvestChart = ({ width, height, data }) => {
         top: scaleY(max),
         value: max,
       };
+      console.log(values, "values");
       return values;
     }
     return { top: height, value: 0 };
@@ -102,13 +104,13 @@ export const InvestChart = ({ width, height, data }) => {
   return (
     <>
       <svg width={width} height={height}>
-        <LinearGradient id="loading-gradient" from={'#aaa'} to={'#efefef'} />
+        <LinearGradient id="loading-gradient" from={"#aaa"} to={"#efefef"} />
         <LinearGradient
           id="edufina-gradient"
           from={palette.accent.main}
           to={palette.accent.dark}
         />
-        <LinearGradient id="bank-gradient" from={'#c91f17'} to={'#884744'} />
+        <LinearGradient id="bank-gradient" from={"#c91f17"} to={"#884744"} />
 
         <AnimatedAreaClosed
           redraw={[width, height]}
@@ -117,7 +119,7 @@ export const InvestChart = ({ width, height, data }) => {
           y={loadingScales.scaleY}
           yScale={loadingScales.scaleY}
           strokeWidth={2}
-          stroke={'#aaa'}
+          stroke={"#aaa"}
           fill="url(#loading-gradient)"
           curve={curveMonotoneX}
         />
@@ -151,7 +153,7 @@ export const InvestChart = ({ width, height, data }) => {
           className={clsx(
             classes.investValueLabel,
             classes.investValueEduFina,
-            { 'count-in': edufina.value > 0 }
+            { "count-in": edufina.value > 0 }
           )}
         >
           <Counter value={edufina.value} onDisplayValue={displayMoney} />
@@ -160,7 +162,7 @@ export const InvestChart = ({ width, height, data }) => {
         <div
           style={{ top: bank.value <= 0 ? bank.top + 40 : bank.top }}
           className={clsx(classes.investValueLabel, classes.investValueBank, {
-            'count-in': bank.value > 0,
+            "count-in": bank.value > 0,
           })}
         >
           <Counter value={bank.value} onDisplayValue={displayMoney} />
@@ -199,7 +201,7 @@ function AnimatedAreaClosed({
 
   useEffect(() => {
     const isRedraw = data && redrawRef.current === data;
-    const hasOutro = typeof outroFnRef.current === 'function';
+    const hasOutro = typeof outroFnRef.current === "function";
     if (!isRedraw) {
       redrawRef.current = data;
       if (hasOutro) {
@@ -220,18 +222,18 @@ function AnimatedAreaClosed({
       const d3select = d3.select(elRef.current);
 
       const redraw = () => {
-        d3select.attr('d', path);
+        d3select.attr("d", path);
       };
       const reset = () => {
         const min = d3.min(yScale.domain());
         const resetData = Array(data.length).fill(min);
-        d3select.datum(resetData).attr('d', path);
+        d3select.datum(resetData).attr("d", path);
       };
       const intro = () => {
         d3select
           .datum(data)
           .transition(introTransitionGetter())
-          .attr('d', path);
+          .attr("d", path);
       };
 
       outroFnRef.current = (fn = noop) => {
@@ -241,13 +243,13 @@ function AnimatedAreaClosed({
         d3select
           .datum(mockData)
           .transition(trans)
-          .attr('d', path)
-          .on('end', fn);
+          .attr("d", path)
+          .on("end", fn);
       };
 
       if (isRedraw) {
         redraw();
-        console.log('sync redraw');
+        console.log("sync redraw");
       } else {
         const tid = window.setTimeout(
           () => {
@@ -270,30 +272,29 @@ function AnimatedAreaClosed({
 }
 
 function displayMoney(count) {
-  return '$' + formatMoney(count);
+  return "$" + formatMoney(count);
 }
-function formatMoney(amount, decimalCount = 2, decimal = '.', thousands = ',') {
+
+function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
   try {
     decimalCount = Math.abs(decimalCount);
     decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
 
-    const negativeSign = amount < 0 ? '-' : '';
-
-    let i = parseInt(
-      (amount = Math.abs(Number(amount) || 0).toFixed(decimalCount))
-    ).toString();
+    const negativeSign = amount < 0 ? "-" : "";
+    let i = parseInt((amount = Math.abs(Number(amount) || 0))).toString();
     let j = i.length > 3 ? i.length % 3 : 0;
 
     return (
       negativeSign +
-      (j ? i.substr(0, j) + thousands : '') +
-      i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + thousands) +
+      (j ? i.substr(0, j) + thousands : "") +
+      i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) +
       (decimalCount
         ? decimal +
           Math.abs(amount - i)
+            // .toString()
             .toFixed(decimalCount)
             .slice(2)
-        : '')
+        : "")
     );
   } catch (e) {
     console.log(e);
