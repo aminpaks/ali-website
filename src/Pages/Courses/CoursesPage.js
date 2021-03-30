@@ -33,7 +33,7 @@ const useStyles = makeStyles(({ breakpoints }) => ({
   content: {
     '& > div,p': {
       marginBottom: '1rem',
-      fontSize: 30
+      fontSize: 28
     },
   },
   boxContainer: {
@@ -167,14 +167,16 @@ export const PageCourses = () => {
             <Grid item md={7}>
               <div className={classes.content}>
                 <p>
-                Step 1: Register now with your email
+                  I - Download our syllabus below
                 </p>
                 <p>
-                  Step 2: An instructor will contact you 
-                  in under 24 hours to schedule your sessions
+                  II - Call and pass our phone interview
                 </p>
                 <p>
-                  Step 3: Learn to invest on your own
+                  III - Register for the course
+                </p>
+                <p>
+                  IV - Reserve your sessions
                 </p>
               </div>
             </Grid>
@@ -185,9 +187,14 @@ export const PageCourses = () => {
             </Grid>
           </Grid>
         </Section.Part>
-        
+            
               <div className={classes.nda}>
-                All students will be required to sign a confidentiality agreement
+                <p>
+                  Do not regsiter before calling 1(855) Edu-Fina
+                </p>
+                <p>
+                  All students will be required to sign a confidentiality agreement
+                </p>
               </div>
 
         <Section.Part variant="compact" className={classes.coursesSection}>

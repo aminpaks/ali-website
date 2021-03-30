@@ -243,6 +243,8 @@ export const PageContact = () => {
                 <div>
                   <BusinessIcon />
                   <div>
+                  7575 Trans Canada Route
+                    7575 Trans Canada Route
                     <span>7575 Trans Canada Route</span>
                     <span>Saint-Laurent, QC</span>
                     <span>H4T 1V6</span>
